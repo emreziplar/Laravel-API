@@ -6,16 +6,16 @@ use App\DTO\ResponseDTO;
 
 trait HttpResponse
 {
-    public function getHttpResponse(ResponseDTO $responseService)
+    public function getHttpResponse(ResponseDTO $responseDTO)
     {
         $res = [
-            'success' => $responseService->isSuccess(),
-            'message' => $responseService->getMessage()
+            'success' => $responseDTO->isSuccess(),
+            'message' => $responseDTO->getMessage()
         ];
 
-        if (!empty($responseService->getData()))
-            $res['data'] = $responseService->getData();
+        if (!empty($responseDTO->getData()))
+            $res['data'] = $responseDTO->getData();
 
-        return response()->json($res, $responseService->getStatusCode());
+        return response()->json($res, $responseDTO->getStatusCode());
     }
 }

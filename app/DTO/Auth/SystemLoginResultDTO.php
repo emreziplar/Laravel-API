@@ -2,10 +2,10 @@
 
 namespace App\DTO\Auth;
 
-use App\DTO\Contracts\IDTO;
+use App\DTO\Contracts\ILoginDTO;
 use App\Models\User;
 
-final class SystemLoginResultDTO implements IDTO
+final class SystemLoginResultDTO implements ILoginDTO
 {
     private readonly ?string $token;
     private readonly ?User $user;
@@ -21,15 +21,6 @@ final class SystemLoginResultDTO implements IDTO
         $this->token = $token;
         $this->user = $user;
         $this->message = $message;
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'token' => $this->token,
-            'user' => $this->user?->toArray(),
-            'message' => $this->message
-        ];
     }
 
     /**

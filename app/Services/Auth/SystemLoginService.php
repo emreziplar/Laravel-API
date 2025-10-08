@@ -4,16 +4,16 @@ namespace App\Services\Auth;
 
 use App\Contracts\Auth\ILoginService;
 use App\DTO\Auth\SystemLoginResultDTO;
-use App\Repositories\Contracts\IAuthRepository;
+use App\Repositories\Contracts\Auth\IAuthRepository;
 use Illuminate\Support\Facades\Hash;
 
 class SystemLoginService implements ILoginService
 {
-    private IAuthRepository $authRepositoryService;
+    private IAuthRepository $authRepository;
 
-    public function __construct(IAuthRepository $authRepositoryService)
+    public function __construct(IAuthRepository $authRepository)
     {
-        $this->authRepositoryService = $authRepositoryService;
+        $this->authRepository = $authRepository;
     }
 
     public function login(array $data): SystemLoginResultDTO
@@ -21,12 +21,12 @@ class SystemLoginService implements ILoginService
         $req_email = $data['email'];
         $req_password = $data['password'];
 
-        $user = $this->authRepositoryService->findByEmail($req_email);
+        $user = $this->authRepository->findByEmail($req_email);
 
         if (!$user || !Hash::check($req_password, $user->password))
             return new SystemLoginResultDTO(null, null, 'Email and password do not match!');
 
-        $token = $this->authRepositoryService->createToken($user);
+        $token = $this->authRepository->createToken($user);
 
         return new SystemLoginResultDTO($token, $user, 'Login Successful!');
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\api\v1;
+namespace App\Http\Controllers\api\v1\Auth;
 
 use App\Contracts\Auth\IAuthService;
 use App\DTO\ResponseDTO;
@@ -23,9 +23,9 @@ class AuthController extends Controller
 
         $system_login_dto = $this->authService->login($login_data);
 
-        $token = $system_login_dto->getToken() ?? null;
-        $user = $system_login_dto->getUser() ?? null;
-        $message = $system_login_dto->getMessage() ?? null;
+        $token = $system_login_dto->getToken();
+        $user = $system_login_dto->getUser();
+        $message = $system_login_dto->getMessage();
 
         if (empty($token) || empty($user))
             return $this->getHttpResponse(new ResponseDTO(false, $message, null, 401));

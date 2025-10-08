@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
-use App\Repositories\Contracts\IAuthRepository;
+use App\Repositories\Contracts\Auth\IAuthRepository;
+use App\Repositories\Contracts\Role\IPermissionRepository;
 use App\Repositories\Eloquent\Auth\AuthRepository;
+use App\Repositories\Eloquent\Role\PermissionRepository;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -13,8 +15,8 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(IAuthRepository::class,AuthRepository::class);
-
+        $this->app->singleton(IAuthRepository::class, AuthRepository::class);
+        $this->app->singleton(IPermissionRepository::class, PermissionRepository::class);
     }
 
     /**

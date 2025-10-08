@@ -3,7 +3,7 @@
 namespace App\Repositories\Eloquent\Auth;
 
 use App\Models\User;
-use App\Repositories\Contracts\IAuthRepository;
+use App\Repositories\Contracts\Auth\IAuthRepository;
 
 class AuthRepository implements IAuthRepository
 {
