@@ -12,4 +12,6 @@ use Illuminate\Support\Collection;
 interface IPermissionRepository extends IBaseRepository
 {
     public function getPermissionByPrefixOrSuffix(string $prefix = null, string $suffix = null): Collection;
+
+    public function withRoles(): IPermissionRepository;
 }

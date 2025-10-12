@@ -2,7 +2,6 @@
 
 namespace App\Repositories\Contracts;
 
-use App\Models\Contracts\IPermissionModel;
 use Illuminate\Support\Collection;
 
 /**
@@ -36,4 +35,6 @@ interface IBaseRepository
     public function update(int $id, array $data): mixed;
 
     public function delete(int $id): bool;
+
+    public function pluckByColumn(string $col, array $data, string $pluckVal, string $pluckKey = null): mixed;
 }

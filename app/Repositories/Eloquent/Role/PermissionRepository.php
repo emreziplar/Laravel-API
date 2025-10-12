@@ -16,15 +16,13 @@ class PermissionRepository extends BaseRepository implements IPermissionReposito
 
     public function getPermissionByPrefixOrSuffix(string $prefix = null, string $suffix = null): Collection
     {
-        $q = Permission::query();
-
         if ($prefix)
-            $q->whereLike('name', $prefix . '.%');
+            $this->model->whereLike('name', $prefix . '.%');
 
         if ($suffix)
-            $q->whereLike('name', '%.' . $suffix);
+            $this->model->whereLike('name', '%.' . $suffix);
 
-        return $q->get();
+        return $this->model->get();
     }
 
     public function create(array $data): mixed
@@ -48,5 +46,11 @@ class PermissionRepository extends BaseRepository implements IPermissionReposito
         $permission = $this->model::query()->find($id);
         $permission->update(['name' => $data['name']]);
         return $permission;
+    }
+
+    public function withRoles(): IPermissionRepository
+    {
+        $this->model = $this->model->query()->with('roles');
+        return $this;
     }
 }

@@ -11,6 +11,7 @@ class GetRoleRequest extends FormRequest
         return [
             'id' => 'nullable|integer',
             'role' => 'nullable|string',
+            'permissions' => 'nullable|bool'
         ];
     }
 }

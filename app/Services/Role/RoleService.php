@@ -32,12 +32,15 @@ class RoleService implements IRoleService
         $id = $filters['id'] ?? null;
         $role = $filters['role'] ?? null;
 
+        $roleRepo = $this->roleRepository;
+        $roleRepo->withPermissions();
+
         if ($id) {
-            $role = $this->roleRepository->get($id);
+            $role = $roleRepo->get($id);
         } elseif ($role) {
-            $role = $this->roleRepository->get($role, 'role');
+            $role = $roleRepo->get($role, 'role');
         } else {
-            $role = $this->roleRepository->all();
+            $role = $roleRepo->all();
         }
 
         if ($role instanceof Collection) {
@@ -51,7 +54,9 @@ class RoleService implements IRoleService
 
     public function update(int $id, array $data): IRoleDTO
     {
-        $role = $this->roleRepository->update($id, $data);
+        $roleRepo = $this->roleRepository;
+        $roleRepo->withPermissions();
+        $role = $roleRepo->update($id, $data);
 
         return new RoleDTO($role ? $role : null, $role ? 'Role updated!' : 'Role is not updated!');
     }
@@ -63,5 +68,32 @@ class RoleService implements IRoleService
         $roleData = $role_deleted ? collect() : null;
 
         return new RoleDTO($roleData, $role_deleted ? 'Role is successfully deleted!' : 'Role is not deleted!');
+    }
+
+    public function assignPermission(array $data): IRoleDTO
+    {
+        $role_id = $data['role_id'] ?? null;
+        $permissions = $data['permissions'] ?? null;
+
+        $result = $this->roleRepository->assignPermissions($role_id, $permissions);
+
+        if (empty($result['processed_permissions']))
+            return new RoleDTO(null, 'Permission(s) is not assigned or already exists!');
+
+        return new RoleDTO($result['current_role'], 'Permission(s) is successfully assigned.');
+    }
+
+    public function revokePermission(array $data): IRoleDTO
+    {
+
+        $role_id = $data['role_id'] ?? null;
+        $permissions = $data['permissions'] ?? null;
+
+        $result = $this->roleRepository->revokePermissions($role_id, $permissions);
+        if (empty($result['processed_permissions']))
+            return new RoleDTO(null, 'Permission(s) is not revoked or not found!');
+
+        return new RoleDTO($result['current_role'], 'Permission(s) is successfully revoked.');
+
     }
 }

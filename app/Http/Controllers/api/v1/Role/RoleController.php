@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Role\CreateRoleRequest;
 use App\Http\Requests\Role\DeleteRoleRequest;
 use App\Http\Requests\Role\GetRoleRequest;
+use App\Http\Requests\Role\RolePermission\AssignPermissionRequest;
 use App\Http\Requests\Role\UpdateRoleRequest;
 use App\Http\Resources\Role\RoleResource;
 use Illuminate\Http\Request;
@@ -70,6 +71,28 @@ class RoleController extends Controller
             $role_dto->getMessage(),
             $this->toResource(RoleResource::class,$role_dto->getRole()),
             $role_dto->getRole() ? 200 : 404
+        ));
+    }
+
+    public function assignPermission(AssignPermissionRequest $assignPermissionsRequest)
+    {
+        $role_dto = $this->roleService->assignPermission($assignPermissionsRequest->validated());
+
+        return $this->getHttpResponse(new ResponseDTO(
+            (bool)$role_dto,
+            $role_dto->getMessage(),
+            $this->toResource(RoleResource::class, $role_dto->getRole())
+        ));
+    }
+
+    public function revokePermission(AssignPermissionRequest $assignPermissionsRequest)
+    {
+        $role_dto = $this->roleService->revokePermission($assignPermissionsRequest->validated());
+
+        return $this->getHttpResponse(new ResponseDTO(
+            (bool)$role_dto,
+            $role_dto->getMessage(),
+            $this->toResource(RoleResource::class, $role_dto->getRole())
         ));
     }
 }

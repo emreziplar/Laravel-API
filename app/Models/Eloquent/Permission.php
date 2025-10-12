@@ -17,7 +17,15 @@ class Permission extends Model implements IPermissionModel
     {
         return [
             'id' => $this->id,
-            'name' => $this->name
+            'name' => $this->name,
+            'roles' => $this->relationLoaded('roles')
+                ? $this->roles->pluck('role')->toArray()
+                : []
         ];
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'role_permissions', 'permission_id', 'role_id');
     }
 }

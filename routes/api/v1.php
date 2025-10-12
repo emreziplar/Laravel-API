@@ -18,7 +18,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/get', [\App\Http\Controllers\api\v1\Role\RoleController::class, 'getRole']);
         Route::post('/update', [\App\Http\Controllers\api\v1\Role\RoleController::class, 'updateRole']);
         Route::post('/delete', [\App\Http\Controllers\api\v1\Role\RoleController::class, 'deleteRole']);
+        Route::middleware('accept.json')->post('/assign-permission', [\App\Http\Controllers\api\v1\Role\RoleController::class, 'assignPermission']);
+        Route::middleware('accept.json')->post('/revoke-permission', [\App\Http\Controllers\api\v1\Role\RoleController::class, 'revokePermission']);
     });
-
 
 });

@@ -13,9 +13,17 @@ class Role extends Model implements IRoleModel
 
     public function toResourceArray(): array
     {
-        return[
+        return [
             'id' => $this->id,
-            'role' => $this->role
+            'role' => $this->role,
+            'permissions' =>  $this->relationLoaded('permissions')
+                ? $this->permissions->pluck('name')->toArray()
+                : []
         ];
+    }
+
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'role_permissions', 'role_id', 'permission_id');
     }
 }

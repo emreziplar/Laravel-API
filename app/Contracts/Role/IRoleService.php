@@ -10,5 +10,5 @@ use App\DTO\Contracts\IRoleDTO;
  */
 interface IRoleService extends IBaseService
 {
-
+    public function assignPermission(array $data): IRoleDTO;
 }

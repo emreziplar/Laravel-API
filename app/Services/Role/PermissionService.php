@@ -33,6 +33,9 @@ class PermissionService implements IPermissionService
         $name = $filters['name'] ?? null;
         $ability = $filters['ability'] ?? null;
 
+        $permissionRepo = $this->permissionRepository;
+        $permissionRepo->withRoles();
+
         if ($id) {
             $permission = $this->permissionRepository->get($id);
         } elseif ($name && $ability) {
