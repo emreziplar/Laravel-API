@@ -15,8 +15,8 @@ class GetPermissionRequest extends FormRequest
     {
         return [
             'id' => 'nullable|integer',
-            'name' => 'nullable|alpha',
-            'ability' => 'nullable|alpha'
+            'name' => 'nullable|string',
+            'ability' => 'nullable|string'
         ];
     }
 }

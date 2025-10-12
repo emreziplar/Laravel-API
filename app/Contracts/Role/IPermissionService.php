@@ -2,17 +2,13 @@
 
 namespace App\Contracts\Role;
 
+use App\Contracts\IBaseService;
 use App\DTO\Contracts\IPermissionDTO;
 
-interface IPermissionService
+/**
+ * @extends IBaseService<IPermissionDTO>
+ */
+interface IPermissionService extends IBaseService
 {
-    public function createPermission(array $data): IPermissionDTO;
-
-    public function getPermission(array $filters): IPermissionDTO;
-
-    public function updatePermission(int $id, string $name): IPermissionDTO;
-
-    public function deletePermission(int $id): IPermissionDTO;
-
 
 }

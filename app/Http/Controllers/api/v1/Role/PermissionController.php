@@ -23,7 +23,7 @@ class PermissionController extends Controller
 
     public function createPermission(CreatePermissionRequest $permissionRequest)
     {
-        $permission_dto = $this->permissionService->createPermission($permissionRequest->validated());
+        $permission_dto = $this->permissionService->create($permissionRequest->validated());
 
         $permission = $permission_dto->getPermission();
 
@@ -37,7 +37,7 @@ class PermissionController extends Controller
 
     public function getPermission(GetPermissionRequest $permissionRequest)
     {
-        $permission_dto = $this->permissionService->getPermission($permissionRequest->validated());
+        $permission_dto = $this->permissionService->get($permissionRequest->validated());
 
         $msg = $permission_dto->getMessage();
         $data = $this->toResource(PermissionResource::class, $permission_dto->getPermission());
@@ -48,7 +48,7 @@ class PermissionController extends Controller
     {
         $request = $updatePermissionRequest->validated();
 
-        $permission_dto = $this->permissionService->updatePermission($request['id'], $request['name']);
+        $permission_dto = $this->permissionService->update($request['id'], ['name' => $request['name']]);
 
         $msg = $permission_dto->getMessage();
         $data = $this->toResource(PermissionResource::class, $permission_dto->getPermission());
@@ -60,7 +60,7 @@ class PermissionController extends Controller
     {
         $request = $permissionRequest->validated();
 
-        $permission_dto = $this->permissionService->deletePermission($request['id']);
+        $permission_dto = $this->permissionService->delete($request['id']);
 
         $msg = $permission_dto->getMessage();
         $data = $this->toResource(PermissionResource::class, $permission_dto->getPermission());

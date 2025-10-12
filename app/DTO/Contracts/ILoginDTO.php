@@ -2,10 +2,10 @@
 
 namespace App\DTO\Contracts;
 
-use App\Models\User;
+use App\Models\Contracts\IUserModel;
 
 interface ILoginDTO extends IDTO
 {
     public function getToken(): ?string;
-    public function getUser(): ?User;
+    public function getUser(): ?IUserModel;
 }

@@ -2,29 +2,16 @@
 
 namespace App\Repositories\Eloquent\Role;
 
-use App\DTO\Contracts\IPermissionDTO;
-use App\Models\Permission;
+use App\Models\Eloquent\Permission;
 use App\Repositories\Contracts\Role\IPermissionRepository;
+use App\Repositories\Eloquent\BaseRepository;
 use Illuminate\Support\Collection;
 
-class PermissionRepository implements IPermissionRepository
+class PermissionRepository extends BaseRepository implements IPermissionRepository
 {
-
-    public function createPermission(array $data): Permission|bool
+    protected function getModelClass()
     {
-        $permission_name = $data['name'];
-
-        if ($this->getPermission($permission_name, 'name'))
-            return false;
-
-        return Permission::query()->create([
-            'name' => $permission_name
-        ]);
-    }
-
-    public function getPermission(int|string $permission_data, $col = 'id'): ?Permission
-    {
-        return Permission::query()->where($col, $permission_data)->first();
+        return Permission::class;
     }
 
     public function getPermissionByPrefixOrSuffix(string $prefix = null, string $suffix = null): Collection
@@ -40,27 +27,26 @@ class PermissionRepository implements IPermissionRepository
         return $q->get();
     }
 
-    public function updatePermission(int $id, string $name): Permission|bool|null
+    public function create(array $data): mixed
     {
-        if (!$this->getPermission($id)) {
+        $permission_name = $data['name'];
+
+        if ($this->get($permission_name, 'name'))
+            return false;
+
+        return $this->model::query()->create([
+            'name' => $permission_name
+        ]);
+    }
+
+    public function update(int $id, array $data): mixed
+    {
+        if (!$this->get($id)) {
             return false;
         }
 
-        $permission = Permission::query()->find($id);
-        $permission->update(['name' => $name]);
+        $permission = $this->model::query()->find($id);
+        $permission->update(['name' => $data['name']]);
         return $permission;
-    }
-
-    public function deletePermission(int $id): bool
-    {
-        if (!$this->getPermission($id))
-            return false;
-
-        return Permission::query()->where('id', $id)->delete();
-    }
-
-    public function all(): Collection
-    {
-        return Permission::all();
     }
 }

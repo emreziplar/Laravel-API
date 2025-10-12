@@ -17,9 +17,9 @@ class PermissionService implements IPermissionService
         $this->permissionRepository = $permissionRepository;
     }
 
-    public function createPermission(array $data): IPermissionDTO
+    public function create(array $data): IPermissionDTO
     {
-        $permission = $this->permissionRepository->createPermission($data);
+        $permission = $this->permissionRepository->create($data);
 
         if (!$permission)
             return new PermissionDTO(null, 'Permission is not created!');
@@ -27,16 +27,16 @@ class PermissionService implements IPermissionService
         return new PermissionDTO($permission, 'Permission is successfully created!');
     }
 
-    public function getPermission(array $filters): IPermissionDTO
+    public function get(array $filters): IPermissionDTO
     {
         $id = $filters['id'] ?? null;
         $name = $filters['name'] ?? null;
         $ability = $filters['ability'] ?? null;
 
         if ($id) {
-            $permission = $this->permissionRepository->getPermission($id);
+            $permission = $this->permissionRepository->get($id);
         } elseif ($name && $ability) {
-            $permission = $this->permissionRepository->getPermission($name . '.' . $ability, 'name');
+            $permission = $this->permissionRepository->get($name . '.' . $ability, 'name');
         } elseif ($name) {
             $permission = $this->permissionRepository->getPermissionByPrefixOrSuffix($name);
         } elseif ($ability) {
@@ -51,21 +51,21 @@ class PermissionService implements IPermissionService
             $found = $permission !== null;
         }
 
-        $message = $found ? 'Permission(s) found!' : 'Permission not found!';
+        $message = $found ? 'Permission(s) found.' : 'Permission not found!';
 
         return new PermissionDTO($found ? $permission : null, $message);
     }
 
-    public function updatePermission(int $id, string $name): IPermissionDTO
+    public function update(int $id, array $data): IPermissionDTO
     {
-        $permission = $this->permissionRepository->updatePermission($id, $name);
+        $permission = $this->permissionRepository->update($id, $data);
 
         return new PermissionDTO($permission ? $permission : null, $permission ? 'Permission updated!' : 'Permission is not updated!');
     }
 
-    public function deletePermission(int $id): IPermissionDTO
+    public function delete(int $id): IPermissionDTO
     {
-        $permission_deleted = $this->permissionRepository->deletePermission($id);
+        $permission_deleted = $this->permissionRepository->delete($id);
 
         $permissionData = $permission_deleted ? collect() : null;
 

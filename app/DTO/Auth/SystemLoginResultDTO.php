@@ -3,20 +3,20 @@
 namespace App\DTO\Auth;
 
 use App\DTO\Contracts\ILoginDTO;
-use App\Models\User;
+use App\Models\Contracts\IUserModel;
 
 final class SystemLoginResultDTO implements ILoginDTO
 {
     private readonly ?string $token;
-    private readonly ?User $user;
+    private readonly ?IUserModel $user;
     private readonly string $message;
 
     /**
      * @param string|null $token
-     * @param User|null $user
+     * @param IUserModel|null $user
      * @param string $message
      */
-    public function __construct(?string $token, ?User $user, string $message = '')
+    public function __construct(?string $token, ?IUserModel $user, string $message = '')
     {
         $this->token = $token;
         $this->user = $user;
@@ -32,9 +32,9 @@ final class SystemLoginResultDTO implements ILoginDTO
     }
 
     /**
-     * @return User|null
+     * @return IUserModel|null
      */
-    public function getUser(): ?User
+    public function getUser(): ?IUserModel
     {
         return $this->user;
     }

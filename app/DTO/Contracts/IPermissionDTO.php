@@ -2,10 +2,10 @@
 
 namespace App\DTO\Contracts;
 
-use App\Models\Permission;
+use App\Models\Contracts\IPermissionModel;
 use Illuminate\Support\Collection;
 
 interface IPermissionDTO extends IDTO
 {
-    public function getPermission(): Permission|Collection|null;
+    public function getPermission(): IPermissionModel|Collection|null;
 }

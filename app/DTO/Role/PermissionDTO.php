@@ -2,19 +2,16 @@
 
 namespace App\DTO\Role;
 
-use App\DTO\BaseDTO;
 use App\DTO\Contracts\IPermissionDTO;
-use App\Http\Resources\Role\PermissionResource;
-use App\Models\Permission;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use App\Models\Contracts\IPermissionModel;
 use Illuminate\Support\Collection;
 
 final class PermissionDTO implements IPermissionDTO
 {
-    private readonly Permission|Collection|null $permissionData;
+    private readonly IPermissionModel|Collection|null $permissionData;
     private readonly string $message;
 
-    public function __construct(Permission|Collection|null $permissionData, string $message = '')
+    public function __construct(IPermissionModel|Collection|null $permissionData, string $message = '')
     {
         $this->permissionData = $permissionData;
         $this->message = $message;
@@ -25,7 +22,7 @@ final class PermissionDTO implements IPermissionDTO
         return $this->message;
     }
 
-    public function getPermission(): Permission|Collection|null
+    public function getPermission(): IPermissionModel|Collection|null
     {
         return $this->permissionData;
     }
