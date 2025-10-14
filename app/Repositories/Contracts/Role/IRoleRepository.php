@@ -12,9 +12,9 @@ use App\Repositories\Contracts\IBaseRepository;
  */
 interface IRoleRepository extends IBaseRepository
 {
-    public function withPermissions(): IRoleRepository;
-
     public function assignPermissions(int $role_id, array $permission_names);
 
     public function revokePermissions(int $role_id, array $permission_names);
+
+    public function isPermissionOfRole(int $role_id, string $permission_name): bool;
 }

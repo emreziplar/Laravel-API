@@ -14,11 +14,9 @@ class Role extends Model implements IRoleModel
     public function toResourceArray(): array
     {
         return [
-            'id' => $this->id,
+            'id' => (int)$this->id,
             'role' => $this->role,
-            'permissions' =>  $this->relationLoaded('permissions')
-                ? $this->permissions->pluck('name')->toArray()
-                : []
+            'permissions' => $this->permissions?->pluck('name')
         ];
     }
 

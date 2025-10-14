@@ -20,7 +20,13 @@ interface IBaseRepository
      * @param string $col
      * @return TModel|null
      */
-    public function get(int|string $data, string $col = 'id'): mixed;
+    public function getFirst(int|string $data, string $col = 'id'): mixed;
+
+    /**
+     * @param array $conditions
+     * @return Collection<int, TModel>
+     */
+    public function getWithConditions(array $conditions = []): Collection;
 
     /**
      * @return Collection<int, TModel>

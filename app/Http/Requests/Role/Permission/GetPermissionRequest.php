@@ -6,11 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class GetPermissionRequest extends FormRequest
 {
-    public function all($keys = null)
-    {
-        return $this->query();
-    }
-
     public function rules(): array
     {
         return [

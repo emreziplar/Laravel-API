@@ -13,7 +13,7 @@ use App\Http\Resources\Role\PermissionResource;
 
 class PermissionController extends Controller
 {
-
+    private const POLICY = 'permissionPolicy';
     protected IPermissionService $permissionService;
 
     public function __construct(IPermissionService $permissionService)
@@ -23,13 +23,15 @@ class PermissionController extends Controller
 
     public function createPermission(CreatePermissionRequest $permissionRequest)
     {
-        $permission_dto = $this->permissionService->create($permissionRequest->validated());
+        $this->authorize('create',self::POLICY);
 
-        $permission = $permission_dto->getPermission();
+        $permissionDTO = $this->permissionService->create($permissionRequest->validated());
+
+        $permission = $permissionDTO->getPermission();
 
         return $this->getHttpResponse(new ResponseDTO(
             (bool)$permission,
-            $permission_dto->getMessage(),
+            $permissionDTO->getMessage(),
             $permission ? $this->toResource(PermissionResource::class, $permission) : null,
             $permission ? 201 : 409
         ));
@@ -37,33 +39,39 @@ class PermissionController extends Controller
 
     public function getPermission(GetPermissionRequest $permissionRequest)
     {
-        $permission_dto = $this->permissionService->get($permissionRequest->validated());
+        $this->authorize('get', self::POLICY);
 
-        $msg = $permission_dto->getMessage();
-        $data = $this->toResource(PermissionResource::class, $permission_dto->getPermission());
+        $permissionDTO = $this->permissionService->get($permissionRequest->validated());
+
+        $msg = $permissionDTO->getMessage();
+        $data = $this->toResource(PermissionResource::class, $permissionDTO->getPermission());
         return $this->getHttpResponse(new ResponseDTO((bool)$data, $msg, $data));
     }
 
     public function updatePermission(UpdatePermissionRequest $updatePermissionRequest)
     {
+        $this->authorize('update', self::POLICY);
+
         $request = $updatePermissionRequest->validated();
 
-        $permission_dto = $this->permissionService->update($request['id'], ['name' => $request['name']]);
+        $permissionDTO = $this->permissionService->update($request['id'], ['name' => $request['name']]);
 
-        $msg = $permission_dto->getMessage();
-        $data = $this->toResource(PermissionResource::class, $permission_dto->getPermission());
+        $msg = $permissionDTO->getMessage();
+        $data = $this->toResource(PermissionResource::class, $permissionDTO->getPermission());
         $success = (bool)$data;
         return $this->getHttpResponse(new ResponseDTO($success, $msg, $data));
     }
 
     public function deletePermission(DeletePermissionRequest $permissionRequest)
     {
+        $this->authorize('delete', self::POLICY);
+
         $request = $permissionRequest->validated();
 
-        $permission_dto = $this->permissionService->delete($request['id']);
+        $permissionDTO = $this->permissionService->delete($request['id']);
 
-        $msg = $permission_dto->getMessage();
-        $data = $this->toResource(PermissionResource::class, $permission_dto->getPermission());
+        $msg = $permissionDTO->getMessage();
+        $data = $this->toResource(PermissionResource::class, $permissionDTO->getPermission());
         $success = (bool)$data;
         return $this->getHttpResponse(new ResponseDTO($success, $msg, $data, $success ? 200 : 404));
     }

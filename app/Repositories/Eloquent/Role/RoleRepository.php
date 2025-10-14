@@ -24,32 +24,20 @@ class RoleRepository extends BaseRepository implements IRoleRepository
 
     public function create(array $data): mixed
     {
-        $role_name = $data['role'];
-
-        if ($this->get($role_name, 'role'))
-            return false;
-
-        return $this->model->query()->create([
-            'role' => $role_name,
+        return $this->model->create([
+            'role' => $data['role'],
         ]);
     }
 
     public function update(int $id, array $data): mixed
     {
-        $role = $this->get($id);
+        $role = $this->getFirst($id);
         if (!$role) {
             return false;
         }
 
         $role->update(['role' => $data['role']]);
         return $role;
-    }
-
-    public function withPermissions(): self
-    {
-        $this->model = $this->model->newQuery();
-        $this->model->with('permissions');
-        return $this;
     }
 
     public function assignPermissions(int $role_id, array $permission_names)
@@ -64,7 +52,7 @@ class RoleRepository extends BaseRepository implements IRoleRepository
 
     private function setPermissions(int $role_id, array $permission_names, string $type)
     {
-        $role = $this->get($role_id);
+        $role = $this->getFirst($role_id);
         if (!$role)
             return false;
 
@@ -83,8 +71,20 @@ class RoleRepository extends BaseRepository implements IRoleRepository
         else
             return null;
 
-        $role = $role->load('permissions');
-
         return ['current_role' => $role, 'processed_permissions' => $processed];
+    }
+
+    public function isPermissionOfRole(int $role_id, string $permission_name): bool
+    {
+        /** @var Role $role */
+        $role = $this->getFirst($role_id);
+        if (!$role)
+            return false;
+
+        $role_permission = $role->permissions()->where('name',$permission_name)->first();
+        if(!$role_permission)
+            return false;
+
+        return true;
     }
 }

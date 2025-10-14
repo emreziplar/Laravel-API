@@ -2,10 +2,10 @@
 
 namespace App\DTO\Auth;
 
-use App\DTO\Contracts\ILoginDTO;
+use App\DTO\Contracts\IAuthDTO;
 use App\Models\Contracts\IUserModel;
 
-final class SystemLoginResultDTO implements ILoginDTO
+final class AuthDTO implements IAuthDTO
 {
     private readonly ?string $token;
     private readonly ?IUserModel $user;

@@ -29,7 +29,7 @@ class PermissionRepository extends BaseRepository implements IPermissionReposito
     {
         $permission_name = $data['name'];
 
-        if ($this->get($permission_name, 'name'))
+        if ($this->getFirst($permission_name, 'name'))
             return false;
 
         return $this->model::query()->create([
@@ -39,7 +39,7 @@ class PermissionRepository extends BaseRepository implements IPermissionReposito
 
     public function update(int $id, array $data): mixed
     {
-        if (!$this->get($id)) {
+        if (!$this->getFirst($id)) {
             return false;
         }
 

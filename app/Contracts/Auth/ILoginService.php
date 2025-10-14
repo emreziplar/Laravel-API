@@ -6,6 +6,6 @@ use App\DTO\Contracts\IDTO;
 
 interface ILoginService
 {
-    public function login(array $data): IDTO;
+    public function login(array $fields): IDTO;
     public function getType(): string;
 }

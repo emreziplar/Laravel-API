@@ -30,16 +30,28 @@ abstract class BaseRepository implements IBaseRepository
         return $this->model->get();
     }
 
-    public function get(int|string $data, string $col = 'id'): mixed
+    public function getFirst(int|string $data, string $col = 'id'): mixed
     {
         return $this->model->where($col, $data)->first();
     }
 
+    public function getWithConditions(array $conditions = []): Collection
+    {
+        if (empty($conditions))
+            return $this->all();
+
+        $q = $this->model;
+        foreach ($conditions as $key => $value) {
+            if (is_null($value))
+                continue;
+            $q = $q->where($key, $value);
+        }
+
+        return $q->get();
+    }
+
     public function delete(int $id): bool
     {
-        if (!$this->get($id))
-            return false;
-
         return $this->model->where('id', $id)->delete();
     }
 

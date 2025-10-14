@@ -11,10 +11,12 @@ use App\Http\Requests\Role\GetRoleRequest;
 use App\Http\Requests\Role\RolePermission\AssignPermissionRequest;
 use App\Http\Requests\Role\UpdateRoleRequest;
 use App\Http\Resources\Role\RoleResource;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
+    private const POLICY = 'rolePolicy';
     protected IRoleService $roleService;
 
     public function __construct(IRoleService $roleService)
@@ -24,13 +26,15 @@ class RoleController extends Controller
 
     public function createRole(CreateRoleRequest $createRoleRequest)
     {
-        $role_dto = $this->roleService->create($createRoleRequest->validated());
+        $this->authorize('create',self::POLICY);
 
-        $roleData = $role_dto->getRole();
+        $roleDTO = $this->roleService->create($createRoleRequest->validated());
+
+        $roleData = $roleDTO->getRole();
 
         return $this->getHttpResponse(new ResponseDTO(
             (bool)$roleData,
-            $role_dto->getMessage(),
+            $roleDTO->getMessage(),
             $this->toResource(RoleResource::class, $roleData),
             $roleData ? 201 : 409
         ));
@@ -38,61 +42,71 @@ class RoleController extends Controller
 
     public function getRole(GetRoleRequest $getRoleRequest)
     {
-        $role_dto = $this->roleService->get($getRoleRequest->validated());
+        $this->authorize('get',self::POLICY);
+
+        $roleDTO = $this->roleService->get($getRoleRequest->validated());
 
         return $this->getHttpResponse(new ResponseDTO(
-            (bool)$role_dto,
-            $role_dto->getMessage(),
-            $this->toResource(RoleResource::class, $role_dto->getRole())
+            (bool)$roleDTO->getRole(),
+            $roleDTO->getMessage(),
+            $this->toResource(RoleResource::class, $roleDTO->getRole())
         ));
     }
 
     public function updateRole(UpdateRoleRequest $updateRoleRequest)
     {
+        $this->authorize('update',self::POLICY);
+
         $request = $updateRoleRequest->validated();
 
-        $role_dto = $this->roleService->update($request['id'], ['role' => $request['role']]);
+        $roleDTO = $this->roleService->update($request['id'], $request);
 
         return $this->getHttpResponse(new ResponseDTO(
-            (bool)$role_dto->getRole(),
-            $role_dto->getMessage(),
-            $this->toResource(RoleResource::class, $role_dto->getRole())
+            (bool)$roleDTO->getRole(),
+            $roleDTO->getMessage(),
+            $this->toResource(RoleResource::class, $roleDTO->getRole())
         ));
     }
 
     public function deleteRole(DeleteRoleRequest $roleRequest)
     {
+        $this->authorize('delete',self::POLICY);
+
         $request = $roleRequest->validated();
 
-        $role_dto = $this->roleService->delete($request['id']);
+        $roleDTO = $this->roleService->delete($request['id']);
 
         return $this->getHttpResponse(new ResponseDTO(
-            (bool)$role_dto->getRole(),
-            $role_dto->getMessage(),
-            $this->toResource(RoleResource::class,$role_dto->getRole()),
-            $role_dto->getRole() ? 200 : 404
+            (bool)$roleDTO->getRole(),
+            $roleDTO->getMessage(),
+            $this->toResource(RoleResource::class,$roleDTO->getRole()),
+            $roleDTO->getRole() ? 200 : 404
         ));
     }
 
     public function assignPermission(AssignPermissionRequest $assignPermissionsRequest)
     {
-        $role_dto = $this->roleService->assignPermission($assignPermissionsRequest->validated());
+        $this->authorize('assignPermission',self::POLICY);
+
+        $roleDTO = $this->roleService->assignPermission($assignPermissionsRequest->validated());
 
         return $this->getHttpResponse(new ResponseDTO(
-            (bool)$role_dto,
-            $role_dto->getMessage(),
-            $this->toResource(RoleResource::class, $role_dto->getRole())
+            (bool)$roleDTO->getRole(),
+            $roleDTO->getMessage(),
+            $this->toResource(RoleResource::class, $roleDTO->getRole())
         ));
     }
 
     public function revokePermission(AssignPermissionRequest $assignPermissionsRequest)
     {
-        $role_dto = $this->roleService->revokePermission($assignPermissionsRequest->validated());
+        $this->authorize('revokePermission',self::POLICY);
+
+        $roleDTO = $this->roleService->revokePermission($assignPermissionsRequest->validated());
 
         return $this->getHttpResponse(new ResponseDTO(
-            (bool)$role_dto,
-            $role_dto->getMessage(),
-            $this->toResource(RoleResource::class, $role_dto->getRole())
+            (bool)$roleDTO->getRole(),
+            $roleDTO->getMessage(),
+            $this->toResource(RoleResource::class, $roleDTO->getRole())
         ));
     }
 }

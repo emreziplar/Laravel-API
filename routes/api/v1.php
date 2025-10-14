@@ -3,8 +3,10 @@
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [\App\Http\Controllers\api\v1\Auth\AuthController::class, 'login']);
+Route::post('/register', [\App\Http\Controllers\api\v1\Auth\AuthController::class, 'register']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [\App\Http\Controllers\api\v1\Auth\AuthController::class, 'logout']);
 
     Route::prefix('/permission')->group(function () {
         Route::post('/create', [\App\Http\Controllers\api\v1\Role\PermissionController::class, 'createPermission']);
@@ -20,6 +22,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/delete', [\App\Http\Controllers\api\v1\Role\RoleController::class, 'deleteRole']);
         Route::middleware('accept.json')->post('/assign-permission', [\App\Http\Controllers\api\v1\Role\RoleController::class, 'assignPermission']);
         Route::middleware('accept.json')->post('/revoke-permission', [\App\Http\Controllers\api\v1\Role\RoleController::class, 'revokePermission']);
+    });
+
+    Route::prefix('/user')->group(function () {
+        Route::post('/create', [\App\Http\Controllers\api\v1\User\UserController::class, 'createUser']);
+        Route::get('/get', [\App\Http\Controllers\api\v1\User\UserController::class, 'getUser']);
+        Route::post('/update', [\App\Http\Controllers\api\v1\User\UserController::class, 'updateUser']);
+        Route::post('/delete', [\App\Http\Controllers\api\v1\User\UserController::class, 'deleteUser']);
     });
 
 });

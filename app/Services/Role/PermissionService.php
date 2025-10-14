@@ -37,9 +37,9 @@ class PermissionService implements IPermissionService
         $permissionRepo->withRoles();
 
         if ($id) {
-            $permission = $this->permissionRepository->get($id);
+            $permission = $this->permissionRepository->getFirst($id);
         } elseif ($name && $ability) {
-            $permission = $this->permissionRepository->get($name . '.' . $ability, 'name');
+            $permission = $this->permissionRepository->getFirst($name . '.' . $ability, 'name');
         } elseif ($name) {
             $permission = $this->permissionRepository->getPermissionByPrefixOrSuffix($name);
         } elseif ($ability) {

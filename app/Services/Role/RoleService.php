@@ -19,46 +19,34 @@ class RoleService implements IRoleService
 
     public function create(array $data): IRoleDTO
     {
-        $role = $this->roleRepository->create($data);
-
-        if (!$role)
+        $role = $this->roleRepository->getFirst($data['role'],'role');
+        if ($role)
             return new RoleDTO(null, 'Role is not created!');
+
+        $role = $this->roleRepository->create($data);
 
         return new RoleDTO($role, 'Role is successfully created!');
     }
 
     public function get(array $filters): IRoleDTO
     {
-        $id = $filters['id'] ?? null;
-        $role = $filters['role'] ?? null;
+        $role = $this->roleRepository->getWithConditions($filters);
 
-        $roleRepo = $this->roleRepository;
-        $roleRepo->withPermissions();
-
-        if ($id) {
-            $role = $roleRepo->get($id);
-        } elseif ($role) {
-            $role = $roleRepo->get($role, 'role');
-        } else {
-            $role = $roleRepo->all();
-        }
-
-        if ($role instanceof Collection) {
-            $found = $role->isNotEmpty();
-        } else {
-            $found = $role !== null;
-        }
+        $found = true;
+        if ($role->isEmpty())
+            $found = false;
 
         return new RoleDTO($found ? $role : null, $found ? 'Role(s) found.' : 'Role not found!');
     }
 
     public function update(int $id, array $data): IRoleDTO
     {
-        $roleRepo = $this->roleRepository;
-        $roleRepo->withPermissions();
-        $role = $roleRepo->update($id, $data);
+        $role = $this->roleRepository->getFirst($id);
+        if (!$role)
+            return new RoleDTO(null, 'Role is not found!');
 
-        return new RoleDTO($role ? $role : null, $role ? 'Role updated!' : 'Role is not updated!');
+        $role = $this->roleRepository->update($id, $data);
+        return new RoleDTO($role ?? null, $role ? 'Role updated.' : 'Role is not updated!');
     }
 
     public function delete(int $id): IRoleDTO
@@ -67,7 +55,7 @@ class RoleService implements IRoleService
 
         $roleData = $role_deleted ? collect() : null;
 
-        return new RoleDTO($roleData, $role_deleted ? 'Role is successfully deleted!' : 'Role is not deleted!');
+        return new RoleDTO($roleData, $role_deleted ? 'Role is successfully deleted.' : 'Role is not deleted!');
     }
 
     public function assignPermission(array $data): IRoleDTO
@@ -85,7 +73,6 @@ class RoleService implements IRoleService
 
     public function revokePermission(array $data): IRoleDTO
     {
-
         $role_id = $data['role_id'] ?? null;
         $permissions = $data['permissions'] ?? null;
 
