@@ -18,10 +18,10 @@ interface IBaseService
     public function create(array $data): IDTO;
 
     /**
-     * @param array $filters
+     * @param array $fields
      * @return TDTO
      */
-    public function get(array $filters): IDTO;
+    public function get(array $fields): IDTO;
 
     /**
      * @param int $id

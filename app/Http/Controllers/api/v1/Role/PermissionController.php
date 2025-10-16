@@ -27,7 +27,7 @@ class PermissionController extends Controller
 
         $permissionDTO = $this->permissionService->create($permissionRequest->validated());
 
-        $permission = $permissionDTO->getPermission();
+        $permission = $permissionDTO->getData();
 
         return $this->getHttpResponse(new ResponseDTO(
             (bool)$permission,
@@ -44,7 +44,7 @@ class PermissionController extends Controller
         $permissionDTO = $this->permissionService->get($permissionRequest->validated());
 
         $msg = $permissionDTO->getMessage();
-        $data = $this->toResource(PermissionResource::class, $permissionDTO->getPermission());
+        $data = $this->toResource(PermissionResource::class, $permissionDTO->getData());
         return $this->getHttpResponse(new ResponseDTO((bool)$data, $msg, $data));
     }
 
@@ -57,7 +57,7 @@ class PermissionController extends Controller
         $permissionDTO = $this->permissionService->update($request['id'], ['name' => $request['name']]);
 
         $msg = $permissionDTO->getMessage();
-        $data = $this->toResource(PermissionResource::class, $permissionDTO->getPermission());
+        $data = $this->toResource(PermissionResource::class, $permissionDTO->getData());
         $success = (bool)$data;
         return $this->getHttpResponse(new ResponseDTO($success, $msg, $data));
     }
@@ -71,7 +71,7 @@ class PermissionController extends Controller
         $permissionDTO = $this->permissionService->delete($request['id']);
 
         $msg = $permissionDTO->getMessage();
-        $data = $this->toResource(PermissionResource::class, $permissionDTO->getPermission());
+        $data = $this->toResource(PermissionResource::class, $permissionDTO->getData());
         $success = (bool)$data;
         return $this->getHttpResponse(new ResponseDTO($success, $msg, $data, $success ? 200 : 404));
     }

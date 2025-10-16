@@ -7,5 +7,4 @@ use Illuminate\Support\Collection;
 
 interface IUserDTO extends IDTO
 {
-    public function getUser(): IUserModel|Collection|null;
 }

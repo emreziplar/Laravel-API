@@ -3,7 +3,9 @@
 namespace App\DTO\Auth;
 
 use App\DTO\Contracts\IAuthDTO;
+use App\Models\Contracts\IBaseModel;
 use App\Models\Contracts\IUserModel;
+use Illuminate\Support\Collection;
 
 final class AuthDTO implements IAuthDTO
 {
@@ -47,4 +49,8 @@ final class AuthDTO implements IAuthDTO
         return $this->message;
     }
 
+    public function getData(): IBaseModel|Collection|null
+    {
+        return collect(); //TODO: edit
+    }
 }

@@ -11,7 +11,6 @@ use App\Http\Requests\Role\GetRoleRequest;
 use App\Http\Requests\Role\RolePermission\AssignPermissionRequest;
 use App\Http\Requests\Role\UpdateRoleRequest;
 use App\Http\Resources\Role\RoleResource;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller
@@ -30,7 +29,7 @@ class RoleController extends Controller
 
         $roleDTO = $this->roleService->create($createRoleRequest->validated());
 
-        $roleData = $roleDTO->getRole();
+        $roleData = $roleDTO->getData();
 
         return $this->getHttpResponse(new ResponseDTO(
             (bool)$roleData,
@@ -47,9 +46,9 @@ class RoleController extends Controller
         $roleDTO = $this->roleService->get($getRoleRequest->validated());
 
         return $this->getHttpResponse(new ResponseDTO(
-            (bool)$roleDTO->getRole(),
+            (bool)$roleDTO->getData(),
             $roleDTO->getMessage(),
-            $this->toResource(RoleResource::class, $roleDTO->getRole())
+            $this->toResource(RoleResource::class, $roleDTO->getData())
         ));
     }
 
@@ -62,9 +61,9 @@ class RoleController extends Controller
         $roleDTO = $this->roleService->update($request['id'], $request);
 
         return $this->getHttpResponse(new ResponseDTO(
-            (bool)$roleDTO->getRole(),
+            (bool)$roleDTO->getData(),
             $roleDTO->getMessage(),
-            $this->toResource(RoleResource::class, $roleDTO->getRole())
+            $this->toResource(RoleResource::class, $roleDTO->getData())
         ));
     }
 
@@ -77,10 +76,10 @@ class RoleController extends Controller
         $roleDTO = $this->roleService->delete($request['id']);
 
         return $this->getHttpResponse(new ResponseDTO(
-            (bool)$roleDTO->getRole(),
+            (bool)$roleDTO->getData(),
             $roleDTO->getMessage(),
-            $this->toResource(RoleResource::class,$roleDTO->getRole()),
-            $roleDTO->getRole() ? 200 : 404
+            $this->toResource(RoleResource::class,$roleDTO->getData()),
+            $roleDTO->getData() ? 200 : 404
         ));
     }
 
@@ -91,9 +90,9 @@ class RoleController extends Controller
         $roleDTO = $this->roleService->assignPermission($assignPermissionsRequest->validated());
 
         return $this->getHttpResponse(new ResponseDTO(
-            (bool)$roleDTO->getRole(),
+            (bool)$roleDTO->getData(),
             $roleDTO->getMessage(),
-            $this->toResource(RoleResource::class, $roleDTO->getRole())
+            $this->toResource(RoleResource::class, $roleDTO->getData())
         ));
     }
 
@@ -104,9 +103,9 @@ class RoleController extends Controller
         $roleDTO = $this->roleService->revokePermission($assignPermissionsRequest->validated());
 
         return $this->getHttpResponse(new ResponseDTO(
-            (bool)$roleDTO->getRole(),
+            (bool)$roleDTO->getData(),
             $roleDTO->getMessage(),
-            $this->toResource(RoleResource::class, $roleDTO->getRole())
+            $this->toResource(RoleResource::class, $roleDTO->getData())
         ));
     }
 }

@@ -27,9 +27,9 @@ class UserService implements IUserService
         return new UserDTO($user,'User is created successfully.');
     }
 
-    public function get(array $filters): IDTO
+    public function get(array $fields): IDTO
     {
-        $users = $this->userRepository->getWithConditions($filters);
+        $users = $this->userRepository->getWithConditions($fields);
         if($users->isEmpty())
             return new UserDTO(null,'Users not found!');
 

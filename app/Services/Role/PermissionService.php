@@ -19,56 +19,48 @@ class PermissionService implements IPermissionService
 
     public function create(array $data): IPermissionDTO
     {
-        $permission = $this->permissionRepository->create($data);
+        $permission = $this->permissionRepository->getByName($data['name']);
+        if ($permission)
+            return new PermissionDTO(null, 'Permission is already exists!');
 
+        $permission = $this->permissionRepository->create($data);
         if (!$permission)
             return new PermissionDTO(null, 'Permission is not created!');
 
         return new PermissionDTO($permission, 'Permission is successfully created!');
     }
 
-    public function get(array $filters): IPermissionDTO
+    public function get(array $fields): IPermissionDTO
     {
-        $id = $filters['id'] ?? null;
-        $name = $filters['name'] ?? null;
-        $ability = $filters['ability'] ?? null;
+        $permission = $this->permissionRepository->getWithConditions($fields);
 
-        $permissionRepo = $this->permissionRepository;
-        $permissionRepo->withRoles();
+        $found = false;
+        if ($permission->isNotEmpty())
+            $found = true;
 
-        if ($id) {
-            $permission = $this->permissionRepository->getFirst($id);
-        } elseif ($name && $ability) {
-            $permission = $this->permissionRepository->getFirst($name . '.' . $ability, 'name');
-        } elseif ($name) {
-            $permission = $this->permissionRepository->getPermissionByPrefixOrSuffix($name);
-        } elseif ($ability) {
-            $permission = $this->permissionRepository->getPermissionByPrefixOrSuffix(null, $ability);
-        } else {
-            $permission = $this->permissionRepository->all();
-        }
-
-        if ($permission instanceof Collection) {
-            $found = $permission->isNotEmpty();
-        } else {
-            $found = $permission !== null;
-        }
-
-        $message = $found ? 'Permission(s) found.' : 'Permission not found!';
-
-        return new PermissionDTO($found ? $permission : null, $message);
+        return new PermissionDTO($found ? $permission : null, $found ? 'Permission(s) found.' : 'Permission not found!');
     }
 
     public function update(int $id, array $data): IPermissionDTO
     {
-        $permission = $this->permissionRepository->update($id, $data);
+        $permission = $this->permissionRepository->getFirst($id);
+        if (!$permission)
+            return new PermissionDTO(null, 'Permission not found!');
 
-        return new PermissionDTO($permission ? $permission : null, $permission ? 'Permission updated!' : 'Permission is not updated!');
+        if ($this->permissionRepository->isUpToDate($permission, $data))
+            return new PermissionDTO(null, 'Already up-to-date!');
+
+        $permission = $this->permissionRepository->update($permission, $data);
+        return new PermissionDTO($permission ?? null, $permission ? 'Permission updated!' : 'Permission is not updated!');
     }
 
     public function delete(int $id): IPermissionDTO
     {
-        $permission_deleted = $this->permissionRepository->delete($id);
+        $permission = $this->permissionRepository->getFirst($id);
+        if (!$permission)
+            return new PermissionDTO(null, 'Permission not found!');
+
+        $permission_deleted = $this->permissionRepository->delete($permission);
 
         $permissionData = $permission_deleted ? collect() : null;
 

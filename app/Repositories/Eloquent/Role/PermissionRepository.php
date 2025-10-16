@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent\Role;
 
+use App\Models\Contracts\IPermissionModel;
 use App\Models\Eloquent\Permission;
 use App\Repositories\Contracts\Role\IPermissionRepository;
 use App\Repositories\Eloquent\BaseRepository;
@@ -14,43 +15,37 @@ class PermissionRepository extends BaseRepository implements IPermissionReposito
         return Permission::class;
     }
 
-    public function getPermissionByPrefixOrSuffix(string $prefix = null, string $suffix = null): Collection
+    public function getWithConditions(array $fields = []): Collection
     {
-        if ($prefix)
-            $this->model->whereLike('name', $prefix . '.%');
+        $q = $this->model;
 
-        if ($suffix)
-            $this->model->whereLike('name', '%.' . $suffix);
-
-        return $this->model->get();
-    }
-
-    public function create(array $data): mixed
-    {
-        $permission_name = $data['name'];
-
-        if ($this->getFirst($permission_name, 'name'))
-            return false;
-
-        return $this->model::query()->create([
-            'name' => $permission_name
-        ]);
-    }
-
-    public function update(int $id, array $data): mixed
-    {
-        if (!$this->getFirst($id)) {
-            return false;
+        foreach ($fields as $key => $value) {
+            if (is_null($value))
+                continue;
+            $q = match ($key) {
+                'name' => $q->whereLike('name', $value . '.%'),
+                'ability' => $q->whereLike('name', '%.' . $value),
+                default => $q->where($key, $value)
+            };
         }
 
-        $permission = $this->model::query()->find($id);
-        $permission->update(['name' => $data['name']]);
+        return $q->get();
+    }
+
+    public function getByName(string $name): ?IPermissionModel
+    {
+        /** @var Permission|null $permission */
+        $permission = $this->getFirst($name, 'name');
         return $permission;
     }
 
-    public function withRoles(): IPermissionRepository
+    public function pluckByName(array $permission_names): Collection
     {
-        $this->model = $this->model->query()->with('roles');
-        return $this;
+        return $this->pluckByColumn('name', $permission_names, 'name');
+    }
+
+    public function getIdsByNames(array $permission_names): Collection
+    {
+        return $this->pluckByColumn('name',$permission_names,'id');
     }
 }

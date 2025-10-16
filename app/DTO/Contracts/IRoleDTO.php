@@ -7,5 +7,4 @@ use Illuminate\Support\Collection;
 
 interface IRoleDTO extends IDTO
 {
-    public function getRole(): IRoleModel|Collection|null;
 }

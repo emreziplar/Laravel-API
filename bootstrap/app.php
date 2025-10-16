@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth' => \App\Http\Middleware\Authenticate::class,
             'accept.json' => \App\Http\Middleware\AcceptJSON::class,
+            'localization' => \App\Http\Middleware\Localization::class,
             //'permission' => \App\Http\Middleware\CheckPermission::class,
         ]);
     })

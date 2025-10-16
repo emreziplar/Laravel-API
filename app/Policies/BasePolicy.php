@@ -17,12 +17,12 @@ class BasePolicy
         $this->roleRepository = $roleRepository;
     }
 
-    protected function hasPermission(IUserModel $user,string $permission_name): bool
+    protected function hasPermission(IUserModel $user, string $permission_name): bool
     {
-        $role_id = $user->roleId() ?? null;
-        if(!$role_id)
+        $role = $user->role ?? null;
+        if (!$role)
             return false;
 
-        return $this->roleRepository->isPermissionOfRole($role_id,$permission_name);
+        return $this->roleRepository->isPermissionOfRole($role, $permission_name);
     }
 }

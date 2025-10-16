@@ -28,10 +28,10 @@ class UserController extends Controller
         $userDTO = $this->userService->create($createUserRequest->validated());
 
         return $this->getHttpResponse(new ResponseDTO(
-            (bool)$userDTO->getUser(),
+            (bool)$userDTO->getData(),
             $userDTO->getMessage(),
-            $this->toResource(UserResource::class, $userDTO->getUser()),
-            (bool)$userDTO->getUser() ? 201 : 500
+            $this->toResource(UserResource::class, $userDTO->getData()),
+            (bool)$userDTO->getData() ? 201 : 500
         ));
     }
 
@@ -42,9 +42,9 @@ class UserController extends Controller
         $userDTO = $this->userService->get($getUserRequest->validated());
 
         return $this->getHttpResponse(new ResponseDTO(
-            (bool)$userDTO->getUser(),
+            (bool)$userDTO->getData(),
             $userDTO->getMessage(),
-            $this->toResource(UserResource::class, $userDTO->getUser())
+            $this->toResource(UserResource::class, $userDTO->getData())
         ));
     }
 
@@ -56,9 +56,9 @@ class UserController extends Controller
         $userDTO = $this->userService->update($req['id'], $req);
 
         return $this->getHttpResponse(new ResponseDTO(
-            (bool)$userDTO->getUser(),
+            (bool)$userDTO->getData(),
             $userDTO->getMessage(),
-            $this->toResource(UserResource::class, $userDTO->getUser())
+            $this->toResource(UserResource::class, $userDTO->getData())
         ));
     }
 
@@ -70,7 +70,7 @@ class UserController extends Controller
         $userDTO = $this->userService->delete($req['id']);
 
         return $this->getHttpResponse(new ResponseDTO(
-            (bool)$userDTO->getUser(),
+            (bool)$userDTO->getData(),
             $userDTO->getMessage(),
             null
         ));
