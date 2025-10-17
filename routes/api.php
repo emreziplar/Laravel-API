@@ -7,6 +7,6 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //})->middleware('auth:sanctum');
 
-Route::prefix('/v1')->middleware('localization')->group(function () {
+Route::prefix('/v1')->group(function () {
     require_once base_path('routes/api/v1.php');
 });

@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'exists' => 'Rol zaten mevcut!',
     'created' => 'Rol başarıyla oluşturuldu!',
     'not_created' => 'Rol oluşturulamadı!',
@@ -19,5 +18,4 @@ return [
     'successfully_revoked' => 'İzin(ler) başarıyla kaldırıldı: :permissions',
     'deleted' => 'Rol başarıyla silindi.',
     'not_deleted' => 'Rol silinemedi!'
-
 ];

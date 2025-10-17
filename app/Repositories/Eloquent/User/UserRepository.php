@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent\User;
 
+use App\Models\Contracts\IUserModel;
 use App\Models\Eloquent\User;
 use App\Repositories\Contracts\User\IUserRepository;
 use App\Repositories\Eloquent\BaseRepository;
@@ -14,27 +15,10 @@ class UserRepository extends BaseRepository implements IUserRepository
         return User::class;
     }
 
-    public function create(array $data): mixed
+    public function findByEmail(string $email): ?IUserModel
     {
-        $new_data = [
-            'role_id' => $data['role_id'],
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => $data['password']
-        ];
-        if ($data['status'])
-            $new_data['status'] = $data['status'];
-
-        return $this->model->create($new_data);
-    }
-
-    public function update(int $id, array $data): mixed
-    {
-        $user = $this->getFirst($id);
-        if (!$user)
-            return false;
-
-        $user->update($data);
+        /** @var User|null $user */
+        $user = $this->getFirst($email, 'email');
         return $user;
     }
 }

@@ -62,7 +62,7 @@ abstract class BaseRepository implements IBaseRepository
             if (!in_array($key, $fillable))
                 continue;
 
-            if ($baseModel->{$key} !== $value)
+            if ($baseModel->{$key} != $value)
                 return false;
         }
         return true;

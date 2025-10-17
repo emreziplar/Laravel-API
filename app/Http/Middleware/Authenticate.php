@@ -21,7 +21,7 @@ class Authenticate extends Middleware
         } catch (AuthenticationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthenticated.'
+                'message' => __t('auth.unauthenticated')
             ], 401);
         }
     }
