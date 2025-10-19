@@ -37,7 +37,7 @@ return new class extends Migration {
 
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('parent_id');
+            $table->unsignedBigInteger('parent_id')->nullable();
             $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
@@ -49,6 +49,7 @@ return new class extends Migration {
             $table->string('slug')->unique();
             $table->string('lang_code', 5);
             $table->timestamps();
+            $table->unique(['category_id', 'lang_code']);
         });
 
         Schema::create('blogs', function (Blueprint $table) {
@@ -72,7 +73,7 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('mediable_id');
             $table->string('mediable_type');
-            $table->string('type',25);
+            $table->string('type', 25);
             $table->string('path');
             $table->timestamps();
         });

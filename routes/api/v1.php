@@ -31,4 +31,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/delete', [\App\Http\Controllers\api\v1\User\UserController::class, 'deleteUser']);
     });
 
+    Route::prefix('category')->group(function () {
+        Route::middleware('accept.json')->post('/create', [\App\Http\Controllers\api\v1\Category\CategoryController::class, 'createCategory']);
+        Route::get('/get', [\App\Http\Controllers\api\v1\Category\CategoryController::class, 'getCategory']);
+    });
+
 });

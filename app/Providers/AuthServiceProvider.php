@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 
+use App\Policies\Category\CategoryPolicy;
 use App\Policies\Role\PermissionPolicy;
 use App\Policies\Role\RolePolicy;
 use App\Policies\User\UserPolicy;
@@ -10,11 +11,12 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 
 class AuthServiceProvider extends ServiceProvider
 {
-    //some policies are db-agnostic
+    //db-agnostic
     protected $policies = [
         'permissionPolicy' => PermissionPolicy::class,
         'rolePolicy' => RolePolicy::class,
-        'userPolicy' => UserPolicy::class
+        'userPolicy' => UserPolicy::class,
+        'categoryPolicy' => CategoryPolicy::class
     ];
 
     public function register(): void

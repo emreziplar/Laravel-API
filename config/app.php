@@ -127,4 +127,5 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'db_query_log' => false,
 ];
