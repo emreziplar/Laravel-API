@@ -11,13 +11,9 @@ class Role extends Model implements IRoleModel
 
     protected $fillable = ['role'];
 
-    public function toResourceArray(): array
+    public function getId(): int
     {
-        return [
-            'id' => (int)$this->id,
-            'role' => $this->role,
-            'permissions' => $this->permissions?->pluck('name')
-        ];
+        return $this->id;
     }
 
     public function permissions()

@@ -9,9 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 
-abstract class BaseRepository implements IBaseRepository
+abstract class BaseEloquentRepository implements IBaseRepository
 {
     protected Model|Builder $model;
+    protected array $defaultWith = [];
 
     public function __construct()
     {
@@ -26,6 +27,11 @@ abstract class BaseRepository implements IBaseRepository
 
     abstract protected function getModelClass();
 
+    protected function getDefaultRelations(): array
+    {
+        return [];
+    }
+
     public function all(): Collection
     {
         return $this->model->get();
@@ -38,12 +44,23 @@ abstract class BaseRepository implements IBaseRepository
 
     public function getFirst(int|string $data, string $col = 'id'): ?IBaseModel
     {
-        return $this->model->where($col, $data)->first();
+        $q = $this->model->newQuery();
+
+        if (!empty($this->getDefaultRelations())) {
+            $q = $q->with($this->defaultWith);
+        }
+
+        return $q->where($col, $data)->first();
     }
 
     public function getWithConditions(array $fields = []): Collection
     {
-        $q = $this->model;
+        $q = $this->model->newQuery();
+
+        if (!empty($this->getDefaultRelations())) {
+            $q = $q->with($this->defaultWith);
+        }
+
         foreach ($fields as $key => $value) {
             if (is_null($value))
                 continue;

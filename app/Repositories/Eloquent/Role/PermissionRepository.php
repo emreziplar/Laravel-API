@@ -5,10 +5,10 @@ namespace App\Repositories\Eloquent\Role;
 use App\Models\Contracts\IPermissionModel;
 use App\Models\Eloquent\Permission;
 use App\Repositories\Contracts\Role\IPermissionRepository;
-use App\Repositories\Eloquent\BaseRepository;
+use App\Repositories\Eloquent\BaseEloquentRepository;
 use Illuminate\Support\Collection;
 
-class PermissionRepository extends BaseRepository implements IPermissionRepository
+class PermissionRepository extends BaseEloquentRepository implements IPermissionRepository
 {
     protected function getModelClass()
     {

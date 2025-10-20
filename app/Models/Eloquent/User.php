@@ -34,24 +34,17 @@ class User extends Authenticatable implements IUserModel
         ];
     }
 
-    public function toResourceArray(): array
-    {
-        return [
-            'id' => (int)$this->id,
-            'role_id' => (int)$this->role_id,
-            'name' => $this->name,
-            'email' => $this->email,
-            'status' => (int)$this->status,
-            'role' => $this->role?->toResourceArray(),
-        ];
-    }
-
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id');
     }
 
-    public function roleId(): int
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function roleId(): ?int
     {
         return $this->role_id;
     }

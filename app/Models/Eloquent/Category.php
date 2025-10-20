@@ -11,19 +11,14 @@ class Category extends Model implements ICategoryModel
     protected $table = 'categories';
     protected $fillable = ['parent_id', 'status'];
 
-    public function toResourceArray(): array
+    public function getId(): int
     {
-        return [
-            'id' => $this->id,
-            'names' => $this->translations?->pluck('name', 'lang_code'),
-            'full_path' => $this->fullPath(),
-            'parent' => $this->parent
-                ? [
-                    'id' => $this->parent->id,
-                    'names' => $this->parent->translations?->pluck('name', 'lang_code')
-                ]
-                : []
-        ];
+        return $this->id;
+    }
+
+    public function getParentId(): ?int
+    {
+        return $this->parent_id;
     }
 
     public function translations()
@@ -34,19 +29,6 @@ class Category extends Model implements ICategoryModel
     public function parent()
     {
         return $this->belongsTo(self::class, 'parent_id');
-    }
-
-    public function translation($lang_code = '')
-    {
-        $lang_code = $lang_code ?: App::getLocale();
-
-        return $this->hasOne(CategoryTranslation::class, 'category_id')
-            ->where('lang_code', $lang_code);
-    }
-
-    public function children()
-    {
-        return $this->hasMany(self::class, 'parent_id');
     }
 
     public function fullPath(): string

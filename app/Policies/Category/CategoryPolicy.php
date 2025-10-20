@@ -22,4 +22,9 @@ class CategoryPolicy extends BasePolicy
     {
         return $this->hasPermission($user,'category.update');
     }
+
+    public function delete(IUserModel $user)
+    {
+        return $this->hasPermission($user,'category.delete');
+    }
 }

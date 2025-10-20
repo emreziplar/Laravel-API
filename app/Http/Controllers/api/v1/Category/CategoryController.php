@@ -6,6 +6,7 @@ use App\Contracts\Category\ICategoryService;
 use App\DTO\ResponseDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Category\CreateCategoryRequest;
+use App\Http\Requests\Category\DeleteCategoryRequest;
 use App\Http\Requests\Category\GetCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Http\Resources\Category\CategoryResource;
@@ -53,5 +54,29 @@ class CategoryController extends Controller
     {
         $this->authorize('update', self::POLICY);
 
+        $request_data = $updateCategoryRequest->validated();
+        $categoryDTO = $this->categoryService->update($request_data['id'], $request_data);
+
+        return $this->getHttpResponse(new ResponseDTO(
+            $is_created = (bool)$data = $categoryDTO->getData(),
+            $categoryDTO->getMessage(),
+            $this->toResource(CategoryResource::class, $data),
+            $is_created ? 200 : 500
+        ));
+    }
+
+    public function deleteCategory(DeleteCategoryRequest $deleteCategoryRequest)
+    {
+        $this->authorize('delete', self::POLICY);
+
+        $request_data = $deleteCategoryRequest->validated();
+        $categoryDTO = $this->categoryService->delete($request_data['id']);
+
+        return $this->getHttpResponse(new ResponseDTO(
+            $is_deleted = (bool)$data = $categoryDTO->getData(),
+            $categoryDTO->getMessage(),
+            $this->toResource(CategoryResource::class, $data),
+            $is_deleted ? 200 : 500
+        ));
     }
 }

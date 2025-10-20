@@ -8,6 +8,9 @@ use Illuminate\Support\Collection;
 
 abstract class BaseModelDTO implements IDTO
 {
+    //TODO: add helper methods for http responses
+    //TODO: refactor return types
+
     protected readonly IBaseModel|Collection|null $data;
     protected readonly string $message;
 

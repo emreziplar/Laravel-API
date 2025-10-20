@@ -5,10 +5,10 @@ namespace App\Repositories\Eloquent\User;
 use App\Models\Contracts\IUserModel;
 use App\Models\Eloquent\User;
 use App\Repositories\Contracts\User\IUserRepository;
-use App\Repositories\Eloquent\BaseRepository;
+use App\Repositories\Eloquent\BaseEloquentRepository;
 use Illuminate\Support\Facades\Hash;
 
-class UserRepository extends BaseRepository implements IUserRepository
+class UserRepository extends BaseEloquentRepository implements IUserRepository
 {
     protected function getModelClass()
     {

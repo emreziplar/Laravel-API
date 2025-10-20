@@ -4,5 +4,5 @@ namespace App\Models\Contracts;
 
 interface IBaseModel
 {
-    public function toResourceArray(): array;
+    public function getId(): int;
 }

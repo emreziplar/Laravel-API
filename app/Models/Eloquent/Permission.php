@@ -13,13 +13,9 @@ class Permission extends Model implements IPermissionModel
         'name'
     ];
 
-    public function toResourceArray(): array
+    public function getId(): int
     {
-        return [
-            'id' => (int)$this->id,
-            'name' => $this->name,
-            'roles' =>  $this->roles?->pluck('role')
-        ];
+        return $this->id;
     }
 
     public function roles()

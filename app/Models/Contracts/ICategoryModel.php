@@ -4,12 +4,7 @@ namespace App\Models\Contracts;
 
 interface ICategoryModel extends IBaseModel
 {
-    public function translation();
+    public function getParentId(): ?int;
 
-    public function translations();
-
-    public function parent();
-
-    public function children();
-
+    public function fullPath(): string;
 }

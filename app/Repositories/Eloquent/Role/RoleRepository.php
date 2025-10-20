@@ -5,11 +5,11 @@ namespace App\Repositories\Eloquent\Role;
 use App\Models\Contracts\IRoleModel;
 use App\Models\Eloquent\Role;
 use App\Repositories\Contracts\Role\IRoleRepository;
-use App\Repositories\Eloquent\BaseRepository;
+use App\Repositories\Eloquent\BaseEloquentRepository;
 use Illuminate\Support\Collection;
 
 
-class RoleRepository extends BaseRepository implements IRoleRepository
+class RoleRepository extends BaseEloquentRepository implements IRoleRepository
 {
     protected function getModelClass()
     {

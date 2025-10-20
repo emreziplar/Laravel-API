@@ -13,7 +13,7 @@ class UpdateCategoryRequest extends FormRequest
             'parent_id' => 'nullable|int',
             'status' => 'nullable|int',
             'translations' => 'nullable|array',
-            'translations.*.name' => 'nullable|string',
+            'translations.*.name' => 'required|string',
             'translations.*.slug' => 'nullable|alpha_dash',
             'translations.*.lang_code' => 'required|string|max:5',
         ];
