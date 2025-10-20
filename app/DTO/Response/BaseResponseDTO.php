@@ -1,12 +1,11 @@
 <?php
 
-namespace App\DTO;
+namespace App\DTO\Response;
 
-use App\DTO\Contracts\IDTO;
 use App\Models\Contracts\IBaseModel;
 use Illuminate\Support\Collection;
 
-abstract class BaseModelDTO implements IDTO
+class BaseResponseDTO
 {
     //TODO: add helper methods for http responses
     //TODO: refactor return types

@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\api\v1\User;
 
 use App\Contracts\User\IUserService;
-use App\DTO\ResponseDTO;
+use App\DTO\Response\ResponseDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\CreateUserRequest;
 use App\Http\Requests\User\DeleteUserRequest;
 use App\Http\Requests\User\GetUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\User\UserResource;
+use Dedoc\Scramble\Attributes\Endpoint;
 
 class UserController extends Controller
 {
@@ -21,6 +22,7 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
+    #[Endpoint('Create User')]
     public function createUser(CreateUserRequest $createUserRequest)
     {
         $this->authorize('create', self::POLICY);
@@ -35,6 +37,7 @@ class UserController extends Controller
         ));
     }
 
+    #[Endpoint('Get User')]
     public function getUser(GetUserRequest $getUserRequest)
     {
         $this->authorize('get', self::POLICY);
@@ -48,6 +51,7 @@ class UserController extends Controller
         ));
     }
 
+    #[Endpoint('Update User')]
     public function updateUser(UpdateUserRequest $updateUserRequest)
     {
         $this->authorize('update', self::POLICY);
@@ -62,6 +66,7 @@ class UserController extends Controller
         ));
     }
 
+    #[Endpoint('Delete User')]
     public function deleteUser(DeleteUserRequest $deleteUserRequest)
     {
         $this->authorize('delete', self::POLICY);

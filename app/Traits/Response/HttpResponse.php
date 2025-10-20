@@ -2,7 +2,7 @@
 
 namespace App\Traits\Response;
 
-use App\DTO\ResponseDTO;
+use App\DTO\Response\ResponseDTO;
 
 trait HttpResponse
 {

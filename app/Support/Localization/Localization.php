@@ -36,6 +36,7 @@ class Localization
 
     public static function writeLangFile(string $key, string $value, string $lang_code)
     {
+        //TODO: use job
         $segments = explode('.', $key);
         $file_name = array_shift($segments);
         $dir = base_path("lang/{$lang_code}");

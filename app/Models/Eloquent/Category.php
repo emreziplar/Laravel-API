@@ -33,6 +33,7 @@ class Category extends Model implements ICategoryModel
 
     public function fullPath(): string
     {
+        //TODO: use cache
         if (!$this->relationLoaded('translations') || !$this->relationLoaded('parent'))
             return 'Full path not loaded!';
 

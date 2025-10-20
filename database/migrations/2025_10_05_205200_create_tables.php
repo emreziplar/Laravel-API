@@ -45,6 +45,7 @@ return new class extends Migration {
         Schema::create('category_translations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('category_id');
+            $table->unsignedBigInteger('author_id')->nullable();
             $table->string('name', 100);
             $table->string('slug')->unique();
             $table->string('lang_code', 5);
@@ -62,11 +63,12 @@ return new class extends Migration {
         Schema::create('blog_translations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('blog_id');
-            $table->string('title');
+            $table->string('title',125);
             $table->string('slug')->unique();
             $table->text('content');
             $table->string('lang_code', 5);
             $table->timestamps();
+            $table->unique(['blog_id', 'lang_code']);
         });
 
         Schema::create('media', function (Blueprint $table) {

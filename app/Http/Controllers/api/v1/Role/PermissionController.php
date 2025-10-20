@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\api\v1\Role;
 
 use App\Contracts\Role\IPermissionService;
-use App\DTO\ResponseDTO;
+use App\DTO\Response\ResponseDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Role\Permission\CreatePermissionRequest;
 use App\Http\Requests\Role\Permission\DeletePermissionRequest;
 use App\Http\Requests\Role\Permission\GetPermissionRequest;
 use App\Http\Requests\Role\Permission\UpdatePermissionRequest;
 use App\Http\Resources\Role\PermissionResource;
+use Dedoc\Scramble\Attributes\Endpoint;
 
 class PermissionController extends Controller
 {
@@ -21,6 +22,7 @@ class PermissionController extends Controller
         $this->permissionService = $permissionService;
     }
 
+    #[Endpoint('Create Permission')]
     public function createPermission(CreatePermissionRequest $permissionRequest)
     {
         $this->authorize('create',self::POLICY);
@@ -37,6 +39,7 @@ class PermissionController extends Controller
         ));
     }
 
+    #[Endpoint('Get Permission')]
     public function getPermission(GetPermissionRequest $permissionRequest)
     {
         $this->authorize('get', self::POLICY);
@@ -48,6 +51,7 @@ class PermissionController extends Controller
         return $this->getHttpResponse(new ResponseDTO((bool)$data, $msg, $data));
     }
 
+    #[Endpoint('Update Permission')]
     public function updatePermission(UpdatePermissionRequest $updatePermissionRequest)
     {
         $this->authorize('update', self::POLICY);
@@ -62,6 +66,7 @@ class PermissionController extends Controller
         return $this->getHttpResponse(new ResponseDTO($success, $msg, $data));
     }
 
+    #[Endpoint('Delete Permission')]
     public function deletePermission(DeletePermissionRequest $permissionRequest)
     {
         $this->authorize('delete', self::POLICY);

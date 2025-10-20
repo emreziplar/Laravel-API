@@ -44,7 +44,7 @@ class User extends Authenticatable implements IUserModel
         return $this->id;
     }
 
-    public function roleId(): ?int
+    public function getRoleId(): ?int
     {
         return $this->role_id;
     }

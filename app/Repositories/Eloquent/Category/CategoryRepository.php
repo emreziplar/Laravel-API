@@ -6,7 +6,6 @@ use App\Models\Contracts\IBaseModel;
 use App\Models\Eloquent\Category;
 use App\Repositories\Contracts\Category\ICategoryRepository;
 use App\Repositories\Eloquent\BaseEloquentRepository;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -45,26 +44,6 @@ class CategoryRepository extends BaseEloquentRepository implements ICategoryRepo
 
             return $category->load(['translations', 'parent.translations']);
         });
-    }
-
-    public function getFirst(int|string $data, string $col = 'id'): ?IBaseModel
-    {
-        $query = $this->model->newQuery()->with(['translations', 'parent.translations']);
-        return $query->where($col, $data)->first();
-    }
-
-
-    public function getWithConditions(array $fields = []): Collection
-    {
-        $q = $this->model->newQuery()->with(['translations', 'parent.translations']);
-
-        foreach ($fields as $key => $value) {
-            if (is_null($value))
-                continue;
-            $q = $q->where($key, $value);
-        }
-
-        return $q->get();
     }
 
     public function update(IBaseModel $baseModel, array $data): ?IBaseModel

@@ -38,4 +38,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/delete', [\App\Http\Controllers\api\v1\Category\CategoryController::class, 'deleteCategory']);
     });
 
+    Route::prefix('blog')->group(function () {
+        Route::middleware('accept.json')->post('/create', [\App\Http\Controllers\api\v1\Blog\BlogController::class, 'createBlog']);
+    });
+
 });

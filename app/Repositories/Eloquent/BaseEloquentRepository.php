@@ -12,7 +12,6 @@ use Illuminate\Support\Collection;
 abstract class BaseEloquentRepository implements IBaseRepository
 {
     protected Model|Builder $model;
-    protected array $defaultWith = [];
 
     public function __construct()
     {
@@ -47,7 +46,7 @@ abstract class BaseEloquentRepository implements IBaseRepository
         $q = $this->model->newQuery();
 
         if (!empty($this->getDefaultRelations())) {
-            $q = $q->with($this->defaultWith);
+            $q = $q->with($this->getDefaultRelations());
         }
 
         return $q->where($col, $data)->first();
@@ -58,7 +57,7 @@ abstract class BaseEloquentRepository implements IBaseRepository
         $q = $this->model->newQuery();
 
         if (!empty($this->getDefaultRelations())) {
-            $q = $q->with($this->defaultWith);
+            $q = $q->with($this->getDefaultRelations());
         }
 
         foreach ($fields as $key => $value) {

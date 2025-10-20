@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\api\v1\Role;
 
 use App\Contracts\Role\IRoleService;
-use App\DTO\ResponseDTO;
+use App\DTO\Response\ResponseDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Role\CreateRoleRequest;
 use App\Http\Requests\Role\DeleteRoleRequest;
@@ -11,7 +11,7 @@ use App\Http\Requests\Role\GetRoleRequest;
 use App\Http\Requests\Role\RolePermission\AssignPermissionRequest;
 use App\Http\Requests\Role\UpdateRoleRequest;
 use App\Http\Resources\Role\RoleResource;
-use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\Endpoint;
 
 class RoleController extends Controller
 {
@@ -23,6 +23,7 @@ class RoleController extends Controller
         $this->roleService = $roleService;
     }
 
+    #[Endpoint('Create Role')]
     public function createRole(CreateRoleRequest $createRoleRequest)
     {
         $this->authorize('create',self::POLICY);
@@ -39,6 +40,7 @@ class RoleController extends Controller
         ));
     }
 
+    #[Endpoint('Get Role')]
     public function getRole(GetRoleRequest $getRoleRequest)
     {
         $this->authorize('get',self::POLICY);
@@ -52,6 +54,7 @@ class RoleController extends Controller
         ));
     }
 
+    #[Endpoint('Update Role')]
     public function updateRole(UpdateRoleRequest $updateRoleRequest)
     {
         $this->authorize('update',self::POLICY);
@@ -67,6 +70,7 @@ class RoleController extends Controller
         ));
     }
 
+    #[Endpoint('Delete Role')]
     public function deleteRole(DeleteRoleRequest $roleRequest)
     {
         $this->authorize('delete',self::POLICY);

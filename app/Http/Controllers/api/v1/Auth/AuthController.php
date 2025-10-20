@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\api\v1\Auth;
 
 use App\Contracts\Auth\IAuthService;
-use App\DTO\ResponseDTO;
+use App\DTO\Response\ResponseDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LogoutRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\SystemLoginRequest;
+use Dedoc\Scramble\Attributes\Endpoint;
 
 class AuthController extends Controller
 {
@@ -18,6 +19,7 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
+    #[Endpoint('Login')]
     public function login(SystemLoginRequest $systemLoginRequest)
     {
         $login_data = $systemLoginRequest->validated();
@@ -40,6 +42,7 @@ class AuthController extends Controller
         return $this->getHttpResponse($response);
     }
 
+    #[Endpoint('Register')]
     public function register(RegisterRequest $registerRequest)
     {
         $authDTO = $this->authService->register($registerRequest->validated());
@@ -56,6 +59,7 @@ class AuthController extends Controller
         ));
     }
 
+    #[Endpoint('Logout')]
     public function logout(LogoutRequest $logoutRequest)
     {
         $authDTO = $this->authService->logout($logoutRequest->user(), $logoutRequest->validated());

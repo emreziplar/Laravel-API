@@ -55,6 +55,10 @@ return new class extends Migration {
                 ->on('blogs')
                 ->references('id')
                 ->cascadeOnDelete();
+            $table->foreign('author_id')
+                ->on('user')
+                ->references('id')
+                ->nullOnDelete();
         });
     }
 
@@ -86,6 +90,7 @@ return new class extends Migration {
 
         Schema::table('blog_translations', function (Blueprint $table) {
             $table->dropForeign(['blog_id']);
+            $table->dropForeign(['author_id']);
         });
 
     }

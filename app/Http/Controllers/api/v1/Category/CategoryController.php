@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\api\v1\Category;
 
 use App\Contracts\Category\ICategoryService;
-use App\DTO\ResponseDTO;
+use App\DTO\Response\ResponseDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Category\CreateCategoryRequest;
 use App\Http\Requests\Category\DeleteCategoryRequest;
 use App\Http\Requests\Category\GetCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Http\Resources\Category\CategoryResource;
-use Illuminate\Http\Request;
+use Dedoc\Scramble\Attributes\Endpoint;
 
 class CategoryController extends Controller
 {
@@ -22,6 +22,7 @@ class CategoryController extends Controller
         $this->categoryService = $categoryService;
     }
 
+    #[Endpoint('Create Category')]
     public function createCategory(CreateCategoryRequest $createCategoryRequest)
     {
         $this->authorize('create', self::POLICY);
@@ -36,6 +37,7 @@ class CategoryController extends Controller
         ));
     }
 
+    #[Endpoint('Get Category')]
     public function getCategory(GetCategoryRequest $getCategoryRequest)
     {
         $this->authorize('get', self::POLICY);
@@ -50,6 +52,7 @@ class CategoryController extends Controller
         ));
     }
 
+    #[Endpoint('Update Category')]
     public function updateCategory(UpdateCategoryRequest $updateCategoryRequest)
     {
         $this->authorize('update', self::POLICY);
@@ -65,6 +68,7 @@ class CategoryController extends Controller
         ));
     }
 
+    #[Endpoint('Delete Category')]
     public function deleteCategory(DeleteCategoryRequest $deleteCategoryRequest)
     {
         $this->authorize('delete', self::POLICY);

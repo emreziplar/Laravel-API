@@ -4,5 +4,5 @@ namespace App\Models\Contracts;
 
 interface IUserModel extends IBaseModel
 {
-    public function roleId(): ?int;
+    public function getRoleId(): ?int;
 }

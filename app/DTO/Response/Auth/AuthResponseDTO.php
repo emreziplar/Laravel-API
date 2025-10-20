@@ -1,13 +1,10 @@
 <?php
 
-namespace App\DTO\Auth;
+namespace App\DTO\Response\Auth;
 
-use App\DTO\Contracts\IAuthDTO;
-use App\Models\Contracts\IBaseModel;
 use App\Models\Contracts\IUserModel;
-use Illuminate\Support\Collection;
 
-final class AuthDTO implements IAuthDTO
+final class AuthResponseDTO
 {
     private readonly ?string $token;
     private readonly ?IUserModel $user;
@@ -47,10 +44,5 @@ final class AuthDTO implements IAuthDTO
     public function getMessage(): string
     {
         return $this->message;
-    }
-
-    public function getData(): IBaseModel|Collection|null
-    {
-        return collect(); //TODO: edit
     }
 }

@@ -2,37 +2,15 @@
 
 namespace App\Contracts;
 
+use App\DTO\Response\BaseResponseDTO;
 
-use App\DTO\Contracts\IDTO;
-
-/**
- * @template TDTO of \App\DTO\IDTO
- */
 interface IBaseService
 {
+    public function create(array $data): BaseResponseDTO;
 
-    /**
-     * @param array $data
-     * @return TDTO
-     */
-    public function create(array $data): IDTO;
+    public function get(array $fields): BaseResponseDTO;
 
-    /**
-     * @param array $fields
-     * @return TDTO
-     */
-    public function get(array $fields): IDTO;
+    public function update(int $id, array $data): BaseResponseDTO;
 
-    /**
-     * @param int $id
-     * @param array $data
-     * @return TDTO
-     */
-    public function update(int $id, array $data): IDTO;
-
-    /**
-     * @param int $id
-     * @return TDTO
-     */
-    public function delete(int $id): IDTO;
+    public function delete(int $id): BaseResponseDTO;
 }
