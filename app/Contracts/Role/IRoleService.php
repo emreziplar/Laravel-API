@@ -3,9 +3,9 @@
 namespace App\Contracts\Role;
 
 use App\Contracts\IBaseService;
-use App\DTO\Response\BaseResponseDTO;
+use App\DTO\Response\ModelResponseDTO;
 
 interface IRoleService extends IBaseService
 {
-    public function assignPermission(array $data): BaseResponseDTO;
+    public function assignPermission(array $data): ModelResponseDTO;
 }

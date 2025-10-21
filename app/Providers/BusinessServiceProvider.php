@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Contracts\Auth\IAuthService;
+use App\Contracts\Blog\IBlogService;
 use App\Contracts\Category\ICategoryService;
 use App\Contracts\Role\IPermissionService;
 use App\Contracts\Role\IRoleService;
@@ -11,6 +12,7 @@ use App\Repositories\Contracts\Auth\IAuthRepository;
 use App\Repositories\Contracts\User\IUserRepository;
 use App\Services\Auth\AuthService;
 use App\Services\Auth\SystemLoginService;
+use App\Services\Blog\BlogService;
 use App\Services\Category\CategoryService;
 use App\Services\Role\PermissionService;
 use App\Services\Role\RoleService;
@@ -35,6 +37,7 @@ class BusinessServiceProvider extends ServiceProvider
         $this->app->singleton(IRoleService::class, RoleService::class);
         $this->app->singleton(IUserService::class, UserService::class);
         $this->app->singleton(ICategoryService::class, CategoryService::class);
+        $this->app->singleton(IBlogService::class, BlogService::class);
     }
 
     /**

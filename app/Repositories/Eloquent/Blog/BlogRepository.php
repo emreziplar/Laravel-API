@@ -2,13 +2,13 @@
 
 namespace App\Repositories\Eloquent\Blog;
 
-use App\Models\Contracts\IBaseModel;
+use App\DTO\Request\Blog\CreateBlogDTO;
 use App\Models\Contracts\IBlogModel;
-use App\Models\Contracts\IUserModel;
 use App\Models\Eloquent\Blog;
 use App\Repositories\Contracts\Blog\IBlogRepository;
 use App\Repositories\Eloquent\BaseEloquentRepository;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class BlogRepository extends BaseEloquentRepository implements IBlogRepository
 {
@@ -22,19 +22,28 @@ class BlogRepository extends BaseEloquentRepository implements IBlogRepository
         return ['translations'];
     }
 
-    public function createWithTranslations(array $blogData, array $translationsData, IUserModel $user): ?IBlogModel
+    public function createWithTranslations(CreateBlogDTO $createBlogDTO): ?IBlogModel
     {
-        return DB::transaction(function () use ($blogData, $translationsData, $user) {
+        return DB::transaction(function () use ($createBlogDTO) {
             /** @var Blog $blog */
-            $blog = $this->model->create($blogData);
+            $blog = $this->model->create([
+                'category_id' => $createBlogDTO->categoryId,
+                'status' => $createBlogDTO->status
+            ]);
 
             $blog->translations()->createMany(
-                collect($translationsData)->map(function ($t) use ($user) {
+                collect($createBlogDTO->translations)->map(function ($t) use ($createBlogDTO) {
                     return [
-                        'author_id' => $user->getId()
+                        'author_id' => $createBlogDTO->user->getId(),
+                        'title' => $t['title'],
+                        'slug' => $t['slug'] ?? Str::slug($t['title']),
+                        'content' => $t['content'],
+                        'lang_code' => $t['lang_code']
                     ];
                 })
             );
+
+            return $blog->load($this->getDefaultRelations());
         });
     }
 }

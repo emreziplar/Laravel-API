@@ -2,15 +2,15 @@
 
 namespace App\Contracts;
 
-use App\DTO\Response\BaseResponseDTO;
+use App\DTO\Response\ModelResponseDTO;
 
 interface IBaseService
 {
-    public function create(array $data): BaseResponseDTO;
+    public function create(array $data): ModelResponseDTO;
 
-    public function get(array $fields): BaseResponseDTO;
+    public function get(array $fields): ModelResponseDTO;
 
-    public function update(int $id, array $data): BaseResponseDTO;
+    public function update(int $id, array $data): ModelResponseDTO;
 
-    public function delete(int $id): BaseResponseDTO;
+    public function delete(int $id): ModelResponseDTO;
 }

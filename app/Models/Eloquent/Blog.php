@@ -20,5 +20,9 @@ class Blog extends Model implements IBlogModel
         return $this->hasMany(BlogTranslation::class, 'blog_id');
     }
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
 
 }

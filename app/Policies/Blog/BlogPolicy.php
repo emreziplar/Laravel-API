@@ -10,21 +10,21 @@ class BlogPolicy extends BasePolicy
 {
     public function create(IUserModel $user)
     {
-        return $this->hasPermission($user,'create');
+        return $this->hasPermission($user,'blog.create');
     }
 
     public function get(IUserModel $user)
     {
-        return $this->hasPermission($user,'get');
+        return $this->hasPermission($user,'blog.get');
     }
 
     public function update(IUserModel $user)
     {
-        return $this->hasPermission($user,'update');
+        return $this->hasPermission($user,'blog.update');
     }
 
     public function delete(IUserModel $user)
     {
-        return $this->hasPermission($user,'delete');
+        return $this->hasPermission($user,'blog.delete');
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Services\User;
 
 use App\Contracts\User\IUserService;
-use App\DTO\Response\BaseResponseDTO;
+use App\DTO\Response\ModelResponseDTO;
 use App\Repositories\Contracts\User\IUserRepository;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,50 +16,50 @@ class UserService implements IUserService
         $this->userRepository = $userRepository;
     }
 
-    public function create(array $data): BaseResponseDTO
+    public function create(array $data): ModelResponseDTO
     {
         $user = $this->userRepository->findByEmail($data['email']);
         if ($user)
-            return new BaseResponseDTO(null, __t('user.exists'));
+            return new ModelResponseDTO(null, __t('user.exists'));
 
         $user = $this->userRepository->create($data);
         if (!$user)
-            return new BaseResponseDTO(null, __t('user.not_created'));
+            return new ModelResponseDTO(null, __t('user.not_created'));
 
-        return new BaseResponseDTO($user, __t('user.created'));
+        return new ModelResponseDTO($user, __t('user.created'));
     }
 
-    public function get(array $fields): BaseResponseDTO
+    public function get(array $fields): ModelResponseDTO
     {
         $users = $this->userRepository->getWithConditions($fields);
         if ($users->isEmpty())
-            return new BaseResponseDTO(null, __t('user.not_found'));
+            return new ModelResponseDTO(null, __t('user.not_found'));
 
-        return new BaseResponseDTO($users, __t('user.found'));
+        return new ModelResponseDTO($users, __t('user.found'));
     }
 
-    public function update(int $id, array $data): BaseResponseDTO
+    public function update(int $id, array $data): ModelResponseDTO
     {
         $user = $this->userRepository->getFirst($id);
         if (!$user)
-            return new BaseResponseDTO(null, __t('user.not_found'));
+            return new ModelResponseDTO(null, __t('user.not_found'));
 
         if ($this->userRepository->isUpToDate($user, $data))
-            return new BaseResponseDTO(null, __t('user.up_to_date'));
+            return new ModelResponseDTO(null, __t('user.up_to_date'));
 
         $user = $this->userRepository->update($user, $data);
 
-        return new BaseResponseDTO($user ?? null, $user ? __t('user.updated') : __t('user.not_updated'));
+        return new ModelResponseDTO($user ?? null, $user ? __t('user.updated') : __t('user.not_updated'));
     }
 
-    public function delete(int $id): BaseResponseDTO
+    public function delete(int $id): ModelResponseDTO
     {
         $user = $this->userRepository->getFirst($id);
         if (!$user)
-            return new BaseResponseDTO(null, __t('user.not_found'));
+            return new ModelResponseDTO(null, __t('user.not_found'));
 
         $is_deleted = $this->userRepository->delete($user);
 
-        return new BaseResponseDTO($is_deleted ? collect() : null, $is_deleted ? __t('user.deleted') : __t('user.not_deleted'));
+        return new ModelResponseDTO($is_deleted ? collect() : null, $is_deleted ? __t('user.deleted') : __t('user.not_deleted'));
     }
 }
