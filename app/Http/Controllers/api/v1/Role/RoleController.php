@@ -28,16 +28,9 @@ class RoleController extends Controller
     {
         $this->authorize('create',self::POLICY);
 
-        $roleDTO = $this->roleService->create($createRoleRequest->validated());
+        $modelResponseDTO = $this->roleService->create($createRoleRequest->validated());
 
-        $roleData = $roleDTO->getData();
-
-        return $this->getHttpResponse(new ResponseDTO(
-            (bool)$roleData,
-            $roleDTO->getMessage(),
-            $this->toResource(RoleResource::class, $roleData),
-            $roleData ? 201 : 409
-        ));
+        return $this->respondWithModelDTO($modelResponseDTO, RoleResource::class);
     }
 
     #[Endpoint('Get Role')]
@@ -45,13 +38,9 @@ class RoleController extends Controller
     {
         $this->authorize('get',self::POLICY);
 
-        $roleDTO = $this->roleService->get($getRoleRequest->validated());
+        $modelResponseDTO = $this->roleService->get($getRoleRequest->validated());
 
-        return $this->getHttpResponse(new ResponseDTO(
-            (bool)$roleDTO->getData(),
-            $roleDTO->getMessage(),
-            $this->toResource(RoleResource::class, $roleDTO->getData())
-        ));
+        return $this->respondWithModelDTO($modelResponseDTO, RoleResource::class);
     }
 
     #[Endpoint('Update Role')]
@@ -59,15 +48,11 @@ class RoleController extends Controller
     {
         $this->authorize('update',self::POLICY);
 
-        $request = $updateRoleRequest->validated();
+        $requestData = $updateRoleRequest->validated();
 
-        $roleDTO = $this->roleService->update($request['id'], $request);
+        $modelResponseDTO = $this->roleService->update($requestData['id'], $requestData);
 
-        return $this->getHttpResponse(new ResponseDTO(
-            (bool)$roleDTO->getData(),
-            $roleDTO->getMessage(),
-            $this->toResource(RoleResource::class, $roleDTO->getData())
-        ));
+        return $this->respondWithModelDTO($modelResponseDTO, RoleResource::class);
     }
 
     #[Endpoint('Delete Role')]
@@ -75,41 +60,28 @@ class RoleController extends Controller
     {
         $this->authorize('delete',self::POLICY);
 
-        $request = $roleRequest->validated();
+        $requestData = $roleRequest->validated();
 
-        $roleDTO = $this->roleService->delete($request['id']);
+        $modelResponseDTO = $this->roleService->delete($requestData['id']);
 
-        return $this->getHttpResponse(new ResponseDTO(
-            (bool)$roleDTO->getData(),
-            $roleDTO->getMessage(),
-            $this->toResource(RoleResource::class,$roleDTO->getData()),
-            $roleDTO->getData() ? 200 : 404
-        ));
+        return $this->respondWithModelDTO($modelResponseDTO, RoleResource::class);
     }
 
     public function assignPermission(AssignPermissionRequest $assignPermissionsRequest)
     {
         $this->authorize('assignPermission',self::POLICY);
 
-        $roleDTO = $this->roleService->assignPermission($assignPermissionsRequest->validated());
+        $modelResponseDTO = $this->roleService->assignPermission($assignPermissionsRequest->validated());
 
-        return $this->getHttpResponse(new ResponseDTO(
-            (bool)$roleDTO->getData(),
-            $roleDTO->getMessage(),
-            $this->toResource(RoleResource::class, $roleDTO->getData())
-        ));
+        return $this->respondWithModelDTO($modelResponseDTO, RoleResource::class);
     }
 
     public function revokePermission(AssignPermissionRequest $assignPermissionsRequest)
     {
         $this->authorize('revokePermission',self::POLICY);
 
-        $roleDTO = $this->roleService->revokePermission($assignPermissionsRequest->validated());
+        $modelResponseDTO = $this->roleService->revokePermission($assignPermissionsRequest->validated());
 
-        return $this->getHttpResponse(new ResponseDTO(
-            (bool)$roleDTO->getData(),
-            $roleDTO->getMessage(),
-            $this->toResource(RoleResource::class, $roleDTO->getData())
-        ));
+        return $this->respondWithModelDTO($modelResponseDTO, RoleResource::class);
     }
 }

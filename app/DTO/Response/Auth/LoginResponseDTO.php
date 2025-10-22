@@ -4,7 +4,7 @@ namespace App\DTO\Response\Auth;
 
 use App\Models\Contracts\IUserModel;
 
-final class AuthResponseDTO
+final class LoginResponseDTO
 {
     private readonly ?string $token;
     private readonly ?IUserModel $user;

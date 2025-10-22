@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\DTO\Response\ModelResponseDTO;
+use App\DTO\Response\ResponseDTO;
 use App\Traits\Response\HttpResponse;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
@@ -11,7 +14,6 @@ use Illuminate\Support\Collection;
 abstract class Controller
 {
     use HttpResponse, AuthorizesRequests;
-
 
     /**
      * @param class-string<JsonResource> $resourceClass
@@ -23,5 +25,20 @@ abstract class Controller
         return $data instanceof Collection
             ? $resourceClass::collection($data)
             : new $resourceClass($data);
+    }
+
+    /**
+     * @param ModelResponseDTO $modelResponseDTO
+     * @param class-string<JsonResource> $resourceClass
+     * @return JsonResponse
+     */
+    protected function respondWithModelDTO(ModelResponseDTO $modelResponseDTO, string $resourceClass = '')
+    {
+        return $this->getHttpResponse(new ResponseDTO(
+            $modelResponseDTO->isSuccess(),
+            $modelResponseDTO->getMessage(),
+            $resourceClass !== '' ? $this->toResource($resourceClass, $modelResponseDTO->getData()) : $modelResponseDTO->getData(),
+            $modelResponseDTO->getStatusCode()
+        ));
     }
 }

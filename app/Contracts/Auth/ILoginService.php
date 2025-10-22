@@ -2,10 +2,10 @@
 
 namespace App\Contracts\Auth;
 
-use App\DTO\Response\Auth\AuthResponseDTO;
+use App\DTO\Response\Auth\LoginResponseDTO;
 
 interface ILoginService
 {
-    public function login(array $fields): AuthResponseDTO;
-    public function getType(): string;
+    public function login(array $fields): LoginResponseDTO;
+    public function getLoginServiceName(): string;
 }

@@ -5,7 +5,8 @@ namespace App\Services\Auth;
 use App\Contracts\Auth\IAuthService;
 use App\Contracts\Auth\ILoginService;
 use App\DTO\Contracts\IAuthDTO;
-use App\DTO\Response\Auth\AuthResponseDTO;
+use App\DTO\Response\Auth\LoginResponseDTO;
+use App\DTO\Response\ModelResponseDTO;
 use App\Models\Contracts\IUserModel;
 use App\Repositories\Contracts\Auth\IAuthRepository;
 use App\Repositories\Contracts\User\IUserRepository;
@@ -29,40 +30,33 @@ class AuthService implements IAuthService
         foreach ($loginServices as $service) {
             if (!$service instanceof ILoginService)
                 continue;
-            $this->loginMap[$service->getType()] = $service;
+            $this->loginMap[$service->getLoginServiceName()] = $service;
         }
     }
 
-    public function redirectLogin(array $fields): AuthResponseDTO
+    public function loginWith(string $loginService, array $fields): LoginResponseDTO
     {
-        $type = $fields['type'] ?? 'system';
-        unset($fields['type']);
-
-        if (!isset($this->loginMap[$type])) {
-            return new AuthResponseDTO(null, null, __t('auth.invalid_type'));
+        if (!isset($this->loginMap[$loginService])) {
+            return new LoginResponseDTO(null, null, __t('auth.invalid_login_service'));
         }
 
-        return $this->loginMap[$type]->login($fields);
+        return $this->loginMap[$loginService]->login($fields);
     }
 
-    public function register(array $fields): AuthResponseDTO
+    public function register(array $fields): ModelResponseDTO
     {
-        $is_user = $this->userRepository->findByEmail($fields['email']);
-        if ($is_user)
-            return new AuthResponseDTO(null, null, __t('auth.register_failed'));
+        $isUser = $this->userRepository->findByEmail($fields['email']);
+        if ($isUser)
+            return new ModelResponseDTO(null, __t('auth.register_failed'), 409);
 
-        $new_user = $this->userRepository->create($fields);
-        if (!$new_user)
-            return new AuthResponseDTO(null, null, __t('auth.register_failed_system'));
+        $createdUser = $this->userRepository->create($fields);
+        if (!$createdUser)
+            return new ModelResponseDTO(null, __t('auth.register_failed_system'), 500);
 
-        $user_token = $this->authRepository->createToken($new_user);
-        if (!$user_token)
-            return new AuthResponseDTO(null, null, __t('auth.register_failed_logic'));
-
-        return new AuthResponseDTO($user_token, $new_user, __t('auth.register_success'));
+        return new ModelResponseDTO($createdUser, __t('auth.register_success'), 201);
     }
 
-    public function logout(IUserModel $user, array $fields): AuthResponseDTO
+    public function logout(IUserModel $user, array $fields): ModelResponseDTO
     {
         $logout_all = $fields['logout_all'] ?? null;
 
@@ -77,6 +71,6 @@ class AuthService implements IAuthService
                 $msg = __t('auth.logout_success');
         }
 
-        return new AuthResponseDTO(null, null, $msg);
+        return new ModelResponseDTO(null, $msg, $is_logout ? 200 : 500);
     }
 }

@@ -25,11 +25,11 @@ class RoleService implements IRoleService
     {
         $role = $this->roleRepository->getByRoleName($data['role']);
         if ($role)
-            return new ModelResponseDTO(null, __t('role.exists'));
+            return new ModelResponseDTO(null, __t('role.exists'), 409);
 
         $role = $this->roleRepository->create($data);
         if (!$role)
-            return new ModelResponseDTO(null, __t('role.not_created'));
+            return new ModelResponseDTO(null, __t('role.not_created'), 500);
 
         return new ModelResponseDTO($role, __t('role.created'));
     }
@@ -42,53 +42,63 @@ class RoleService implements IRoleService
         if ($role->isNotEmpty())
             $found = true;
 
-        return new ModelResponseDTO($found ? $role : null, $found ? __t('role.found') : __t('role.not_found'));
+        return new ModelResponseDTO(
+            $found ? $role : null,
+            $found ? __t('role.found') : __t('role.not_found'),
+            $found ? 200 : 404
+        );
     }
 
     public function update(int $id, array $data): ModelResponseDTO
     {
         $role = $this->roleRepository->getFirst($id);
         if (!$role)
-            return new ModelResponseDTO(null, __t('role.not_found'));
+            return new ModelResponseDTO(null, __t('role.not_found'), 404);
 
         if ($this->roleRepository->isUpToDate($role, $data))
-            return new ModelResponseDTO(null, __t('role.up_to_date'));
+            return new ModelResponseDTO(null, __t('role.up_to_date'), 400);
 
         $role = $this->roleRepository->update($role, $data);
-        return new ModelResponseDTO($role ?? null, $role ? __t('role.updated') : __t('role.not_updated'));
+        return new ModelResponseDTO(
+            $role ?? null,
+            $role ? __t('role.updated') : __t('role.not_updated'),
+            $role ? 200 : 500
+        );
     }
 
     public function delete(int $id): ModelResponseDTO
     {
         $role = $this->roleRepository->getFirst($id);
         if (!$role)
-            return new ModelResponseDTO(null, __t('role.not_found'));
+            return new ModelResponseDTO(null, __t('role.not_found'),404);
 
         $role_deleted = $this->roleRepository->delete($role);
 
-        $roleData = $role_deleted ? collect() : null;
-
-        return new ModelResponseDTO($roleData, $role_deleted ? __t('role.deleted') : __t('role.not_deleted'));
+        return new ModelResponseDTO(
+            null,
+            $role_deleted ? __t('role.deleted') : __t('role.not_deleted'),
+            $role_deleted ? 200 : 500
+        );
     }
 
     public function assignPermission(array $data): ModelResponseDTO
     {
         $role = $this->roleRepository->getFirst($data['role_id']);
         if (!$role)
-            return new ModelResponseDTO(null, __t('role.not_found'));
+            return new ModelResponseDTO(null, __t('role.not_found'), 404);
 
         $missing_permissions = $this->roleValidator->getMissingPermissions($data['permissions']);
         if (!empty($missing_permissions))
-            return new ModelResponseDTO(null, __t('role.create_first', ['missing_permissions' => implode(',', $missing_permissions)]));
+            return new ModelResponseDTO(null, __t('role.create_first', ['missing_permissions' => implode(',', $missing_permissions)]), 404);
 
         $assigned_permissions = $this->roleValidator->getAlreadyAssignedPermissions($role, $data['permissions']);
         if (!empty($assigned_permissions))
-            return new ModelResponseDTO(null, __t('role.already_has_permissions', ['assigned_permissions' => implode(',', $assigned_permissions)]));
+            return new ModelResponseDTO(null, __t('role.already_has_permissions', ['assigned_permissions' => implode(',', $assigned_permissions)]), 409);
 
         $permissionIds = $this->permissionRepository->getIdsByNames($data['permissions'])->toArray();
         $result = $this->roleRepository->assignPermissions($role, $permissionIds);
         if ($result['processed_count'] < 1)
-            return new ModelResponseDTO(null, __t('role.not_assigned'));
+            return new ModelResponseDTO(null, __t('role.not_assigned'), 500);
 
         return new ModelResponseDTO($role, __t('role.successfully_assigned', ['permissions' => implode(',', $data['permissions'])]));
     }
@@ -97,15 +107,15 @@ class RoleService implements IRoleService
     {
         $role = $this->roleRepository->getFirst($data['role_id']);
         if (!$role)
-            return new ModelResponseDTO(null, __t('role.not_found'));
+            return new ModelResponseDTO(null, __t('role.not_found'), 404);
 
         if (!empty($unassigned_permissions = $this->roleValidator->checkUnassignedPermissions($role, $data['permissions'])))
-            return new ModelResponseDTO(null, __t('role.has_not_permissions', ['unassigned_permissions' => implode(',', $unassigned_permissions)]));
+            return new ModelResponseDTO(null, __t('role.has_not_permissions', ['unassigned_permissions' => implode(',', $unassigned_permissions)]), 404);
 
         $permissionIds = $this->permissionRepository->getIdsByNames($data['permissions'])->toArray();
         $result = $this->roleRepository->revokePermissions($role, $permissionIds);
         if ($result['processed_count'] < 1)
-            return new ModelResponseDTO(null, __t('role.not_revoked'));
+            return new ModelResponseDTO(null, __t('role.not_revoked'), 500);
 
         return new ModelResponseDTO($role, __t('role.successfully_revoked', ['permissions' => implode(',', $data['permissions'])]));
     }

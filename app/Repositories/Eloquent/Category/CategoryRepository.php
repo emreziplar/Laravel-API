@@ -2,7 +2,10 @@
 
 namespace App\Repositories\Eloquent\Category;
 
+use App\DTO\Request\Category\CreateCategoryDTO;
+use App\DTO\Request\Category\UpdateCategoryDTO;
 use App\Models\Contracts\IBaseModel;
+use App\Models\Contracts\ICategoryModel;
 use App\Models\Eloquent\Category;
 use App\Repositories\Contracts\Category\ICategoryRepository;
 use App\Repositories\Eloquent\BaseEloquentRepository;
@@ -21,19 +24,17 @@ class CategoryRepository extends BaseEloquentRepository implements ICategoryRepo
         return Category::class;
     }
 
-    public function create(array $data): ?IBaseModel
+    public function createWithTranslations(CreateCategoryDTO $createCategoryDTO): ?ICategoryModel
     {
-        $category_data = [
-            'parent_id' => $data['parent_id'] ?? null,
-            'status' => $data['status'] ?? 0
-        ];
-        $translations = $data['translations'];
-        return DB::transaction(function () use ($category_data, $translations) {
+        return DB::transaction(function () use ($createCategoryDTO) {
             /** @var Category $category */
-            $category = $this->model->create($category_data);
+            $category = $this->model->create([
+                'parent_id' => $createCategoryDTO->parentId ?? null,
+                'status' => $createCategoryDTO->status ?? 0
+            ]);
 
             $category->translations()->createMany(
-                collect($translations)->map(function ($t) {
+                collect($createCategoryDTO->translations)->map(function ($t) {
                     return [
                         'name' => $t['name'],
                         'slug' => $t['slug'] ?? Str::slug($t['name']),
@@ -41,29 +42,28 @@ class CategoryRepository extends BaseEloquentRepository implements ICategoryRepo
                     ];
                 })
             );
-
-            return $category->load(['translations', 'parent.translations']);
+            return $category->load($this->getDefaultRelations());
         });
     }
 
-    public function update(IBaseModel $baseModel, array $data): ?IBaseModel
+    public function updateWithTranslations(UpdateCategoryDTO $updateCategoryDTO): ?ICategoryModel
     {
-        $category_data = [];
+        /** @var Category $category */
+        return DB::transaction(function () use ($updateCategoryDTO) {
+            $categoryModel = $updateCategoryDTO->category;
+            $category_data = [];
 
-        if (!is_null($data['status'] ?? null))
-            $category_data['status'] = $data['status'];
-        if (!is_null($data['parent_id'] ?? null))
-            $category_data['parent_id'] = $data['parent_id'] === 0 ? null : $data['parent_id'];
-        $translations = $data['translations'];
+            if ($updateCategoryDTO->status !== null)
+                $category_data['status'] = $updateCategoryDTO->status;
+            if ($updateCategoryDTO->parentId !== null)
+                $category_data['parent_id'] = $updateCategoryDTO->parentId === 0 ? null : $updateCategoryDTO->parentId;
 
-        /** @var Category $baseModel */
-        return DB::transaction(function () use ($baseModel, $category_data, $translations) {
-            /** @var Category $category */
+
             if (!empty($category_data))
-                $baseModel->update($category_data);
+                $categoryModel->update($category_data);
 
-            foreach ($translations as $t) {
-                $baseModel->translations()->updateOrCreate(
+            foreach ($updateCategoryDTO->translations as $t) {
+                $categoryModel->translations()->updateOrCreate(
                     ['lang_code' => $t['lang_code']],
                     [
                         'name' => $t['name'],
@@ -72,9 +72,7 @@ class CategoryRepository extends BaseEloquentRepository implements ICategoryRepo
                 );
             }
 
-            return $baseModel->load(['translations', 'parent.translations']);
+            return $categoryModel->load($this->getDefaultRelations());
         });
     }
-
-
 }

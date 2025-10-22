@@ -11,7 +11,7 @@ use App\Contracts\User\IUserService;
 use App\Repositories\Contracts\Auth\IAuthRepository;
 use App\Repositories\Contracts\User\IUserRepository;
 use App\Services\Auth\AuthService;
-use App\Services\Auth\SystemLoginService;
+use App\Services\Auth\ApiLoginService;
 use App\Services\Blog\BlogService;
 use App\Services\Category\CategoryService;
 use App\Services\Role\PermissionService;
@@ -27,7 +27,7 @@ class BusinessServiceProvider extends ServiceProvider
     public function register(): void
     {
         $loginServices = [
-            SystemLoginService::class
+            ApiLoginService::class
         ];
         $this->app->tag($loginServices, 'login.services');
         $this->app->singleton(IAuthService::class, function ($app) {

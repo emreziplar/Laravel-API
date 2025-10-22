@@ -19,11 +19,11 @@ class PermissionService implements IPermissionService
     {
         $permission = $this->permissionRepository->getByName($data['name']);
         if ($permission)
-            return new ModelResponseDTO(null,  __t('permission.exists'));
+            return new ModelResponseDTO(null, __t('permission.exists'), 409);
 
         $permission = $this->permissionRepository->create($data);
         if (!$permission)
-            return new ModelResponseDTO(null, __t('permission.not_created'));
+            return new ModelResponseDTO(null, __t('permission.not_created'), 500);
 
         return new ModelResponseDTO($permission, __t('permission.created'));
     }
@@ -36,32 +36,42 @@ class PermissionService implements IPermissionService
         if ($permission->isNotEmpty())
             $found = true;
 
-        return new ModelResponseDTO($found ? $permission : null, $found ? __t('permission.found') : __t('permission.not_found'));
+        return new ModelResponseDTO(
+            $found ? $permission : null,
+            $found ? __t('permission.found') : __t('permission.not_found'),
+            $found ? 200 : 404
+        );
     }
 
     public function update(int $id, array $data): ModelResponseDTO
     {
         $permission = $this->permissionRepository->getFirst($id);
         if (!$permission)
-            return new ModelResponseDTO(null, __t('permission.not_found'));
+            return new ModelResponseDTO(null, __t('permission.not_found'), 404);
 
         if ($this->permissionRepository->isUpToDate($permission, $data))
-            return new ModelResponseDTO(null, __t('permission.up_to_date'));
+            return new ModelResponseDTO(null, __t('permission.up_to_date'), 400);
 
         $permission = $this->permissionRepository->update($permission, $data);
-        return new ModelResponseDTO($permission ?? null, $permission ? __t('permission.updated') : __t('permission.not_updated'));
+        return new ModelResponseDTO(
+            $permission ?? null,
+            $permission ? __t('permission.updated') : __t('permission.not_updated'),
+            $permission ? 200 : 500
+        );
     }
 
     public function delete(int $id): ModelResponseDTO
     {
         $permission = $this->permissionRepository->getFirst($id);
         if (!$permission)
-            return new ModelResponseDTO(null, __t('permission.not_found'));
+            return new ModelResponseDTO(null, __t('permission.not_found'),404);
 
         $permission_deleted = $this->permissionRepository->delete($permission);
 
-        $permissionData = $permission_deleted ? collect() : null;
-
-        return new ModelResponseDTO($permissionData, $permission_deleted ? __t('permission.deleted') : __t('permission.not_deleted'));
+        return new ModelResponseDTO(
+            null,
+            $permission_deleted ? __t('permission.deleted') : __t('permission.not_deleted'),
+            $permission_deleted ? 200 : 500
+        );
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Contracts\Category;
 
+use App\DTO\Request\Category\CreateCategoryDTO;
+use App\DTO\Request\Category\UpdateCategoryDTO;
 use App\Models\Contracts\ICategoryModel;
 use App\Repositories\Contracts\IBaseRepository;
 
@@ -10,5 +12,7 @@ use App\Repositories\Contracts\IBaseRepository;
  */
 interface ICategoryRepository extends IBaseRepository
 {
+    public function createWithTranslations(CreateCategoryDTO $createCategoryDTO): ?ICategoryModel;
 
+    public function updateWithTranslations(UpdateCategoryDTO $updateCategoryDTO): ?ICategoryModel;
 }

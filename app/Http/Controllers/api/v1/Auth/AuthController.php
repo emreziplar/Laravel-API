@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LogoutRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\SystemLoginRequest;
+use App\Http\Resources\Auth\ApiLoginResource;
+use App\Http\Resources\Auth\ApiRegisterResource;
 use Dedoc\Scramble\Attributes\Endpoint;
 
 class AuthController extends Controller
@@ -22,10 +24,7 @@ class AuthController extends Controller
     #[Endpoint('Login')]
     public function login(SystemLoginRequest $systemLoginRequest)
     {
-        $login_data = $systemLoginRequest->validated();
-        $login_data['type'] = 'system';
-
-        $authDTO = $this->authService->login($login_data);
+        $authDTO = $this->authService->loginWith('api', $systemLoginRequest->validated());
 
         $token = $authDTO->getToken();
         $user = $authDTO->getUser();
@@ -38,36 +37,27 @@ class AuthController extends Controller
             'token' => $token,
             'user' => $user
         ];
-        $response = new ResponseDTO(true, $message, $data);
+        $response = new ResponseDTO(
+            true,
+            $message,
+            $this->toResource(ApiLoginResource::class, $data)
+        );
         return $this->getHttpResponse($response);
     }
 
     #[Endpoint('Register')]
     public function register(RegisterRequest $registerRequest)
     {
-        $authDTO = $this->authService->register($registerRequest->validated());
+        $modelResponseDTO = $this->authService->register($registerRequest->validated());
 
-        $data = [
-            'token' => $authDTO->getToken(),
-            'user' => $authDTO->getUser()
-        ];
-        return $this->getHttpResponse(new ResponseDTO(
-            (bool)$data['user'],
-            $authDTO->getMessage(),
-            $data['user'] ? $data : null,
-            $data['user'] ? 201 : 500
-        ));
+        return $this->respondWithModelDTO($modelResponseDTO, ApiRegisterResource::class);
     }
 
     #[Endpoint('Logout')]
     public function logout(LogoutRequest $logoutRequest)
     {
-        $authDTO = $this->authService->logout($logoutRequest->user(), $logoutRequest->validated());
+        $modelResponseDTO = $this->authService->logout($logoutRequest->user(), $logoutRequest->validated());
 
-        return $this->getHttpResponse(new ResponseDTO(
-            !$authDTO->getUser(),
-            $authDTO->getMessage(),
-            null,
-        ));
+        return $this->respondWithModelDTO($modelResponseDTO);
     }
 }

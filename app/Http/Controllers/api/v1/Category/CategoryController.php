@@ -27,14 +27,9 @@ class CategoryController extends Controller
     {
         $this->authorize('create', self::POLICY);
 
-        $categoryDTO = $this->categoryService->create($createCategoryRequest->validated());
+        $modelResponseDTO = $this->categoryService->create($createCategoryRequest->validated());
 
-        return $this->getHttpResponse(new ResponseDTO(
-            $is_created = (bool)$data = $categoryDTO->getData(),
-            $categoryDTO->getMessage(),
-            $this->toResource(CategoryResource::class, $data),
-            $is_created ? 201 : 500
-        ));
+        return $this->respondWithModelDTO($modelResponseDTO, CategoryResource::class);
     }
 
     #[Endpoint('Get Category')]
@@ -42,14 +37,9 @@ class CategoryController extends Controller
     {
         $this->authorize('get', self::POLICY);
 
-        $categoryDTO = $this->categoryService->get($getCategoryRequest->validated());
+        $modelResponseDTO = $this->categoryService->get($getCategoryRequest->validated());
 
-        return $this->getHttpResponse(new ResponseDTO(
-            (bool)$data = $categoryDTO->getData(),
-            $categoryDTO->getMessage(),
-            $this->toResource(CategoryResource::class, $data),
-            $data ? 200 : 404
-        ));
+        return $this->respondWithModelDTO($modelResponseDTO, CategoryResource::class);
     }
 
     #[Endpoint('Update Category')]
@@ -58,14 +48,9 @@ class CategoryController extends Controller
         $this->authorize('update', self::POLICY);
 
         $request_data = $updateCategoryRequest->validated();
-        $categoryDTO = $this->categoryService->update($request_data['id'], $request_data);
+        $modelResponseDTO = $this->categoryService->update($request_data['id'], $request_data);
 
-        return $this->getHttpResponse(new ResponseDTO(
-            $is_created = (bool)$data = $categoryDTO->getData(),
-            $categoryDTO->getMessage(),
-            $this->toResource(CategoryResource::class, $data),
-            $is_created ? 200 : 500
-        ));
+        return $this->respondWithModelDTO($modelResponseDTO, CategoryResource::class);
     }
 
     #[Endpoint('Delete Category')]
@@ -74,13 +59,8 @@ class CategoryController extends Controller
         $this->authorize('delete', self::POLICY);
 
         $request_data = $deleteCategoryRequest->validated();
-        $categoryDTO = $this->categoryService->delete($request_data['id']);
+        $modelResponseDTO = $this->categoryService->delete($request_data['id']);
 
-        return $this->getHttpResponse(new ResponseDTO(
-            $is_deleted = (bool)$data = $categoryDTO->getData(),
-            $categoryDTO->getMessage(),
-            $this->toResource(CategoryResource::class, $data),
-            $is_deleted ? 200 : 500
-        ));
+        return $this->respondWithModelDTO($modelResponseDTO, CategoryResource::class);
     }
 }

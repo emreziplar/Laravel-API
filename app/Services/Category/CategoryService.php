@@ -3,6 +3,8 @@
 namespace App\Services\Category;
 
 use App\Contracts\Category\ICategoryService;
+use App\DTO\Request\Category\CreateCategoryDTO;
+use App\DTO\Request\Category\UpdateCategoryDTO;
 use App\DTO\Response\ModelResponseDTO;
 use App\Repositories\Contracts\Category\ICategoryRepository;
 
@@ -20,13 +22,19 @@ class CategoryService implements ICategoryService
         $parent_id = $data['parent_id'] ?? null;
         if ($parent_id)
             if (!$parent = $this->categoryRepository->getFirst($parent_id))
-                return new ModelResponseDTO(null, __t('category.parent_not_found'));
+                return new ModelResponseDTO(null, __t('category.parent_not_found'), 404);
 
-        $category = $this->categoryRepository->create($data);
+        $createCategoryDTO = new CreateCategoryDTO(
+            parentId: $parent_id,
+            status: $data['status'] ?? null,
+            translations: $data['translations']
+        );
+
+        $category = $this->categoryRepository->createWithTranslations($createCategoryDTO);
         if (!$category)
-            return new ModelResponseDTO(null, __t('category.not_created'));
+            return new ModelResponseDTO(null, __t('category.not_created'), 500);
 
-        return new ModelResponseDTO($category, __t('category.created'));
+        return new ModelResponseDTO($category, __t('category.created'), 201);
     }
 
     public function get(array $fields): ModelResponseDTO
@@ -34,7 +42,7 @@ class CategoryService implements ICategoryService
         $categories = $this->categoryRepository->getWithConditions($fields);
 
         if ($categories->isEmpty())
-            return new ModelResponseDTO(null, __t('category.not_found'));
+            return new ModelResponseDTO(null, __t('category.not_found'), 404);
 
         return new ModelResponseDTO($categories, __t('category.found'));
     }
@@ -43,21 +51,28 @@ class CategoryService implements ICategoryService
     {
         $category = $this->categoryRepository->getFirst($id);
         if (!$category)
-            return new ModelResponseDTO(null, __t('category.not_found'));
+            return new ModelResponseDTO(null, __t('category.not_found'), 404);
 
         $parent_id = $data['parent_id'] ?? null;
 
         if ($parent_id) {
             if (!$parent = $this->categoryRepository->getFirst($parent_id))
-                return new ModelResponseDTO(null, __t('category.parent_not_found'));
+                return new ModelResponseDTO(null, __t('category.parent_not_found'), 404);
 
             if ($id === $parent->getId())
-                return new ModelResponseDTO(null, __t('category.not_updated_as_parent'));
+                return new ModelResponseDTO(null, __t('category.not_updated_as_parent'), 422);
         }
 
-        $category = $this->categoryRepository->update($category, $data);
+        $updateCategoryDTO = new UpdateCategoryDTO(
+            category: $category,
+            parentId: $parent_id,
+            status: $data['status'] ?? null,
+            translations: $data['translations']
+        );
+
+        $category = $this->categoryRepository->updateWithTranslations($updateCategoryDTO);
         if (!$category)
-            return new ModelResponseDTO(null, __t('category.not_updated'));
+            return new ModelResponseDTO(null, __t('category.not_updated'), 500);
 
         return new ModelResponseDTO($category, __t('category.updated'));
     }
@@ -66,12 +81,14 @@ class CategoryService implements ICategoryService
     {
         $category = $this->categoryRepository->getFirst($id);
         if (!$category)
-            return new ModelResponseDTO(null, __t('category.not_found'));
+            return new ModelResponseDTO(null, __t('category.not_found'), 404);
 
         $category_deleted = $this->categoryRepository->delete($category);
 
-        $category = $category_deleted ? collect() : null; //TODO: refactor all delete responses
-
-        return new ModelResponseDTO($category, $category_deleted ? __t('category.deleted') : __t('category.not_deleted'));
+        return new ModelResponseDTO(
+            null,
+            $category_deleted ? __t('category.deleted') : __t('category.not_deleted'),
+            $category_deleted ? 200 : 500
+        );
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\api\v1\Blog;
 
 use App\Contracts\Blog\IBlogService;
-use App\DTO\Response\ResponseDTO;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Blog\CreateBlogRequest;
 use App\Http\Resources\Blog\BlogResource;
@@ -26,11 +25,6 @@ class BlogController extends Controller
 
         $modelResponseDTO = $this->blogService->create($createBlogRequest->validated());
 
-        return $this->getHttpResponse(new ResponseDTO(
-            $isCreated = (bool)$modelResponseDTO->getData(),
-            $modelResponseDTO->getMessage(),
-            $this->toResource(BlogResource::class, $modelResponseDTO->getData()),
-            $isCreated ? 201 : 500
-        ));
+        return $this->respondWithModelDTO($modelResponseDTO, BlogResource::class);
     }
 }

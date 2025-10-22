@@ -27,16 +27,9 @@ class PermissionController extends Controller
     {
         $this->authorize('create',self::POLICY);
 
-        $permissionDTO = $this->permissionService->create($permissionRequest->validated());
+        $modelResponseDTO = $this->permissionService->create($permissionRequest->validated());
 
-        $permission = $permissionDTO->getData();
-
-        return $this->getHttpResponse(new ResponseDTO(
-            (bool)$permission,
-            $permissionDTO->getMessage(),
-            $permission ? $this->toResource(PermissionResource::class, $permission) : null,
-            $permission ? 201 : 409
-        ));
+        return $this->respondWithModelDTO($modelResponseDTO, PermissionResource::class);
     }
 
     #[Endpoint('Get Permission')]
@@ -44,11 +37,9 @@ class PermissionController extends Controller
     {
         $this->authorize('get', self::POLICY);
 
-        $permissionDTO = $this->permissionService->get($permissionRequest->validated());
+        $modelResponseDTO = $this->permissionService->get($permissionRequest->validated());
 
-        $msg = $permissionDTO->getMessage();
-        $data = $this->toResource(PermissionResource::class, $permissionDTO->getData());
-        return $this->getHttpResponse(new ResponseDTO((bool)$data, $msg, $data));
+        return $this->respondWithModelDTO($modelResponseDTO, PermissionResource::class);
     }
 
     #[Endpoint('Update Permission')]
@@ -56,14 +47,10 @@ class PermissionController extends Controller
     {
         $this->authorize('update', self::POLICY);
 
-        $request = $updatePermissionRequest->validated();
+        $requestData = $updatePermissionRequest->validated();
+        $modelResponseDTO = $this->permissionService->update($requestData['id'], $requestData);
 
-        $permissionDTO = $this->permissionService->update($request['id'], ['name' => $request['name']]);
-
-        $msg = $permissionDTO->getMessage();
-        $data = $this->toResource(PermissionResource::class, $permissionDTO->getData());
-        $success = (bool)$data;
-        return $this->getHttpResponse(new ResponseDTO($success, $msg, $data));
+        return $this->respondWithModelDTO($modelResponseDTO, PermissionResource::class);
     }
 
     #[Endpoint('Delete Permission')]
@@ -71,13 +58,10 @@ class PermissionController extends Controller
     {
         $this->authorize('delete', self::POLICY);
 
-        $request = $permissionRequest->validated();
+        $requestData = $permissionRequest->validated();
 
-        $permissionDTO = $this->permissionService->delete($request['id']);
+        $modelResponseDTO = $this->permissionService->delete($requestData['id']);
 
-        $msg = $permissionDTO->getMessage();
-        $data = $this->toResource(PermissionResource::class, $permissionDTO->getData());
-        $success = (bool)$data;
-        return $this->getHttpResponse(new ResponseDTO($success, $msg, $data, $success ? 200 : 404));
+        return $this->respondWithModelDTO($modelResponseDTO, PermissionResource::class);
     }
 }
