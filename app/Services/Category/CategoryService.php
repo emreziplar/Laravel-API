@@ -20,9 +20,8 @@ class CategoryService implements ICategoryService
     public function create(array $data): ModelResponseDTO
     {
         $parent_id = $data['parent_id'] ?? null;
-        if ($parent_id)
-            if (!$parent = $this->categoryRepository->getFirst($parent_id))
-                return new ModelResponseDTO(null, __t('category.parent_not_found'), 404);
+        if ($parent_id && !$parent = $this->categoryRepository->getFirst($parent_id))
+            return new ModelResponseDTO(null, __t('category.parent_not_found'), 404);
 
         $createCategoryDTO = new CreateCategoryDTO(
             parentId: $parent_id,
@@ -67,7 +66,7 @@ class CategoryService implements ICategoryService
             category: $category,
             parentId: $parent_id,
             status: $data['status'] ?? null,
-            translations: $data['translations']
+            translations: $data['translations'] ?? null
         );
 
         $category = $this->categoryRepository->updateWithTranslations($updateCategoryDTO);

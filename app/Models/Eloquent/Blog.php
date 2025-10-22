@@ -25,4 +25,8 @@ class Blog extends Model implements IBlogModel
         return $this->belongsTo(Category::class, 'category_id');
     }
 
+    public function getAuthorId()
+    {
+        return $this->translations;
+    }
 }

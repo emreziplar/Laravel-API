@@ -40,6 +40,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('blog')->group(function () {
         Route::middleware('accept.json')->post('/create', [\App\Http\Controllers\api\v1\Blog\BlogController::class, 'createBlog']);
+        Route::get('/get', [\App\Http\Controllers\api\v1\Blog\BlogController::class, 'getBlog']);
+        Route::middleware('accept.json')->post('/update', [\App\Http\Controllers\api\v1\Blog\BlogController::class, 'updateBlog']);
+        Route::post('/delete', [\App\Http\Controllers\api\v1\Blog\BlogController::class, 'deleteBlog']);
     });
 
 });

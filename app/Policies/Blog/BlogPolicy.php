@@ -3,7 +3,6 @@
 namespace App\Policies\Blog;
 
 use App\Models\Contracts\IUserModel;
-use App\Models\Eloquent\User;
 use App\Policies\BasePolicy;
 
 class BlogPolicy extends BasePolicy

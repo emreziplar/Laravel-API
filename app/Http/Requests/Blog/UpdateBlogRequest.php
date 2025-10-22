@@ -2,27 +2,22 @@
 
 namespace App\Http\Requests\Blog;
 
+use App\Rules\NotIdAlone;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateBlogRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return false;
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            //
+            'id' => ['required', 'int', new NotIdAlone($this->all())],
+            'category_id' => 'nullable|int',
+            'status' => 'nullable|int',
+            'translations' => 'nullable|array',
+            'translations.*.title' => 'nullable|string|max:125',
+            'translations.*.slug' => 'nullable|alpha_dash',
+            'translations.*.content' => 'nullable|string',
+            'translations.*.lang_code' => 'required|string|max:5',
         ];
     }
 }

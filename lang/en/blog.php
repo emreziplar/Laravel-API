@@ -1,7 +1,6 @@
 <?php
 
 return array(
-    'parent_not_found' => 'Parent Blog not found!',
     'not_created' => 'Blog is not created!',
     'created' => 'Blog is successfully created!',
     'found' => 'Blog(s) found.',

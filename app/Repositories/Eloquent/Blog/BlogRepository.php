@@ -3,6 +3,7 @@
 namespace App\Repositories\Eloquent\Blog;
 
 use App\DTO\Request\Blog\CreateBlogDTO;
+use App\DTO\Request\Blog\UpdateBlogDTO;
 use App\Models\Contracts\IBlogModel;
 use App\Models\Eloquent\Blog;
 use App\Repositories\Contracts\Blog\IBlogRepository;
@@ -44,6 +45,42 @@ class BlogRepository extends BaseEloquentRepository implements IBlogRepository
             );
 
             return $blog->load($this->getDefaultRelations());
+        });
+    }
+
+    public function updateWithTranslations(UpdateBlogDTO $updateBlogDTO): ?IBlogModel
+    {
+        return DB::transaction(function () use ($updateBlogDTO) {
+            /** @var Blog $blogModel */
+            $blogModel = $updateBlogDTO->blog;
+
+            $blogData = array_filter([
+                'category_id' => $updateBlogDTO->categoryId,
+                'status' => $updateBlogDTO->status,
+            ], fn($value) => $value !== null);
+
+            if (!empty($blogData))
+                $blogModel->update($blogData);
+
+            collect($updateBlogDTO->translations ?? [])->each(function ($t) use ($blogModel) {
+
+                $translationData = array_filter([
+                    'title' => $t['title'] ?? null,
+                    'slug' => $t['slug'] ?? null,
+                    'content' => $t['content'] ?? null,
+                ], fn($value) => $value !== null);
+
+                if (!isset($translationData['slug']) && isset($translationData['title']))
+                    $translationData['slug'] = Str::slug($translationData['title']);
+
+                if (!empty($translationData))
+                    $blogModel->translations()->updateOrCreate(
+                        ['lang_code' => $t['lang_code']],
+                        $translationData
+                    );
+
+            });
+            return $blogModel->load($this->getDefaultRelations());
         });
     }
 }
