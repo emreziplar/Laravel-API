@@ -31,6 +31,11 @@ class Category extends Model implements ICategoryModel
         return $this->belongsTo(self::class, 'parent_id');
     }
 
+    public function media()
+    {
+        return $this->morphMany(Media::class, 'mediable');
+    }
+
     public function fullPath(): string
     {
         //TODO: use cache

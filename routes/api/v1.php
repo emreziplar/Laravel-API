@@ -31,18 +31,22 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/delete', [\App\Http\Controllers\api\v1\User\UserController::class, 'deleteUser']);
     });
 
-    Route::prefix('category')->group(function () {
+    Route::prefix('/category')->group(function () {
         Route::middleware('accept.json')->post('/create', [\App\Http\Controllers\api\v1\Category\CategoryController::class, 'createCategory']);
         Route::get('/get', [\App\Http\Controllers\api\v1\Category\CategoryController::class, 'getCategory']);
         Route::middleware('accept.json')->post('/update', [\App\Http\Controllers\api\v1\Category\CategoryController::class, 'updateCategory']);
         Route::post('/delete', [\App\Http\Controllers\api\v1\Category\CategoryController::class, 'deleteCategory']);
     });
 
-    Route::prefix('blog')->group(function () {
+    Route::prefix('/blog')->group(function () {
         Route::middleware('accept.json')->post('/create', [\App\Http\Controllers\api\v1\Blog\BlogController::class, 'createBlog']);
         Route::get('/get', [\App\Http\Controllers\api\v1\Blog\BlogController::class, 'getBlog']);
         Route::middleware('accept.json')->post('/update', [\App\Http\Controllers\api\v1\Blog\BlogController::class, 'updateBlog']);
         Route::post('/delete', [\App\Http\Controllers\api\v1\Blog\BlogController::class, 'deleteBlog']);
+    });
+
+    Route::prefix('/media')->group(function () {
+        ROute::post('/create',[\App\Http\Controllers\api\v1\Media\MediaController::class,'createMedia']);
     });
 
 });

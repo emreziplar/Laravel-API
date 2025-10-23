@@ -5,6 +5,7 @@ namespace App\Providers;
 
 use App\Policies\Blog\BlogPolicy;
 use App\Policies\Category\CategoryPolicy;
+use App\Policies\Media\MediaPolicy;
 use App\Policies\Role\PermissionPolicy;
 use App\Policies\Role\RolePolicy;
 use App\Policies\User\UserPolicy;
@@ -19,6 +20,7 @@ class AuthServiceProvider extends ServiceProvider
         'userPolicy' => UserPolicy::class,
         'categoryPolicy' => CategoryPolicy::class,
         'blogPolicy' => BlogPolicy::class,
+        'mediaPolicy' => MediaPolicy::class,
     ];
 
     public function register(): void
