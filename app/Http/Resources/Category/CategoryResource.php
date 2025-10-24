@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Category;
 
+use App\Http\Resources\Media\ModelMediaResource;
 use App\Models\Contracts\ICategoryModel;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -23,6 +24,7 @@ class CategoryResource extends JsonResource
                     'names' => $this->parent->translations?->pluck('name', 'lang_code')
                 ];
             }),
+            'media' => ModelMediaResource::collection($this->media)
         ];
     }
 }

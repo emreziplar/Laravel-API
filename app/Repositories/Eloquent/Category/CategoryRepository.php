@@ -16,10 +16,10 @@ class CategoryRepository extends BaseEloquentRepository implements ICategoryRepo
 {
     protected function getDefaultRelations(): array
     {
-        return ['translations', 'parent.translations'];
+        return ['translations', 'parent.translations', 'media'];
     }
 
-    protected function getModelClass()
+    public function getModelClass(): string
     {
         return Category::class;
     }

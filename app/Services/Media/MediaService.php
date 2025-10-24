@@ -4,9 +4,13 @@ namespace App\Services\Media;
 
 use App\Contracts\Media\IMediaHandler;
 use App\Contracts\Media\IMediaService;
+use App\DTO\Request\Media\CreateMediaDTO;
 use App\DTO\Response\ModelResponseDTO;
+use App\Enums\ResourceType;
+use App\Models\Contracts\IMediaModel;
 use App\Repositories\Contracts\Media\IMediaRepository;
 use App\Repositories\Proxy\RepositoryProxy;
+use App\Support\Media\Media as MediaSupport;
 
 class MediaService implements IMediaService
 {
@@ -21,41 +25,84 @@ class MediaService implements IMediaService
         $this->repositoryProxy = $repositoryProxy;
     }
 
-    public function create(array $data): ModelResponseDTO
+    public function create(CreateMediaDTO $createMediaDTO): ModelResponseDTO
     {
-        $repository = $this->repositoryProxy->for($data['resource_name']);
+        $resourceType = $createMediaDTO->resourceType;
+        $resourceName = $resourceType->value;
+        $resourceId = $createMediaDTO->resourceId;
+        $files = $createMediaDTO->files;
 
-        $modelData = $repository->getFirst($data['resource_id']);
+        $repository = $this->repositoryProxy->on($resourceType);
+
+        $modelData = $repository->getFirst($resourceId);
         if (!$modelData)
-            return new ModelResponseDTO(null, __t('media.resource_not_found', ['resource_name' => $data['resource_name']]), 404);
+            return new ModelResponseDTO(
+                null,
+                __t('media.resource_not_found', ['resource_name' => $resourceName]),
+                404
+            );
 
         //TODO: service validators // file jobs
         $mediaFields = [];
-        foreach ($data['files'] as $file)
-            $mediaFields[] = $this->mediaHandler->store($file, $data['resource_name']);
+        foreach ($files as $file)
+            $mediaFields[] = $this->mediaHandler->store($file, $resourceName);
 
         $mediaOfModel = $this->mediaRepository->createForModel($modelData, $mediaFields);
 
         return new ModelResponseDTO(
             $mediaOfModel ?: null,
             $mediaOfModel
-                ? __t('media.resource_created', ['resource_name' => $data['resource_name']])
-                : __t('media.resource_not_created', ['resource_name' => $data['resource_name']]),
+                ? __t('media.resource_created', ['resource_name' => $resourceName])
+                : __t('media.resource_not_created', ['resource_name' => $resourceName]),
             $mediaOfModel ? 200 : 500);
     }
 
     public function get(array $fields): ModelResponseDTO
     {
-        // TODO: Implement get() method.
-    }
+        $resourceName = $fields['resource_name'] ?? null;
+        if (!$resourceName) {
+            $mediaData = $this->mediaRepository->all();
+            $isMediaData = $mediaData->isNotEmpty();
+            return new ModelResponseDTO(
+                $isMediaData ? $mediaData : null,
+                $isMediaData ? __t('media.found') : __t('media.not_found'),
+                $isMediaData ? 200 : 404
+            );
+        }
 
-    public function update(int $id, array $data): ModelResponseDTO
-    {
-        // TODO: Implement update() method.
+        $resourceType = ResourceType::from($resourceName);
+        $modelClass = $this->repositoryProxy->on($resourceType)->getModelClass();
+
+        $data['mediable_type'] = $modelClass;
+        $resourceId = $fields['resource_id'] ?? null;
+        if ($resourceId)
+            $data['mediable_id'] = $resourceId;
+
+        $mediaData = $this->mediaRepository->getWithConditions($data);
+        $isMediaData = $mediaData->isNotEmpty();
+        return new ModelResponseDTO(
+            $isMediaData ? $mediaData : null,
+            $isMediaData ? __t('media.found') : __t('media.not_found'),
+            $isMediaData ? 200 : 404
+        );
     }
 
     public function delete(int $id): ModelResponseDTO
     {
-        // TODO: Implement delete() method.
+        /** @var IMediaModel $media */
+        $media = $this->mediaRepository->getFirst($id);
+        if (!$media)
+            return new ModelResponseDTO(null, __t('media.not_found'), 404);
+
+        $isDeleted = $this->mediaRepository->delete($media);
+
+        //TODO: jobs
+        if ($isDeleted)
+            MediaSupport::deleteFile($media->getPath());
+
+        return new ModelResponseDTO(
+            $isDeleted ? null : $media,
+            $isDeleted ? __t('media.deleted') : __t('media.not_deleted'),
+            $isDeleted ? 200 : 500);
     }
 }

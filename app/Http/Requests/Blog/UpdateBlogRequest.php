@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Blog;
 
-use App\Rules\NotIdAlone;
+use App\Rules\NotFieldAloneRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateBlogRequest extends FormRequest
@@ -10,7 +10,7 @@ class UpdateBlogRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'int', new NotIdAlone($this->all())],
+            'id' => ['required', 'int', new NotFieldAloneRule($this->all())],
             'category_id' => 'nullable|int',
             'status' => 'nullable|int',
             'translations' => 'nullable|array',

@@ -41,4 +41,6 @@ interface IBaseRepository
     public function delete(IBaseModel $baseModel): bool;
 
     public function pluckByColumn(string $col, array $data, string $pluckValuesCol, string $pluckKeysCol = null): Collection;
+
+    public function getModelClass(): string;
 }

@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 
 class BlogRepository extends BaseEloquentRepository implements IBlogRepository
 {
-    protected function getModelClass()
+    public function getModelClass(): string
     {
         return Blog::class;
     }

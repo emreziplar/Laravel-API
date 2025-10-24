@@ -2,8 +2,14 @@
 
 namespace App\Contracts\Media;
 
-use App\Contracts\IBaseService;
+use App\DTO\Request\Media\CreateMediaDTO;
+use App\DTO\Response\ModelResponseDTO;
 
-interface IMediaService extends IBaseService
+interface IMediaService
 {
+    public function create(CreateMediaDTO $createMediaDTO): ModelResponseDTO;
+
+    public function get(array $fields): ModelResponseDTO;
+
+    public function delete(int $id): ModelResponseDTO;
 }

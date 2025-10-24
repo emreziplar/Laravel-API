@@ -10,20 +10,21 @@ use Intervention\Image\Laravel\Facades\Image;
 
 class ImageHandler implements IMediaHandler
 {
-
     public function store(UploadedFile $file, string $dir = '')
     {
         $image = Image::read($file->getRealPath())->encodeByExtension('webp', 90);
 
-        $filePath = Media::getMediaPath('image/' . $dir . '/' . pathinfo($file->hashName(), PATHINFO_FILENAME) . '.webp');
+        $fileName = pathinfo($file->hashName(), PATHINFO_FILENAME) . '.webp';
+        $filePath = Media::getImagePath($dir . '/' . $fileName);
 
         $is_stored = Storage::disk('public')->put($filePath, $image);
 
         if (!$is_stored)
-            return [];
+            throw new \Exception("Failed to store image: {$filePath}");
 
         return [
             'type' => 'image',
+            'file_name' => $fileName,
             'path' => $filePath
         ];
     }

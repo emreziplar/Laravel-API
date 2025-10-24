@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 
 class RoleRepository extends BaseEloquentRepository implements IRoleRepository
 {
-    protected function getModelClass()
+    public function getModelClass(): string
     {
         return Role::class;
     }

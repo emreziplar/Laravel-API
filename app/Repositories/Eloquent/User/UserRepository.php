@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserRepository extends BaseEloquentRepository implements IUserRepository
 {
-    protected function getModelClass()
+    public function getModelClass(): string
     {
         return User::class;
     }

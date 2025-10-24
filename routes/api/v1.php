@@ -47,6 +47,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('/media')->group(function () {
         ROute::post('/create',[\App\Http\Controllers\api\v1\Media\MediaController::class,'createMedia']);
+        ROute::get('/get',[\App\Http\Controllers\api\v1\Media\MediaController::class,'getMedia']);
+        ROute::post('/delete',[\App\Http\Controllers\api\v1\Media\MediaController::class,'deleteMedia']);
     });
 
 });

@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 
 class PermissionRepository extends BaseEloquentRepository implements IPermissionRepository
 {
-    protected function getModelClass()
+    public function getModelClass(): string
     {
         return Permission::class;
     }

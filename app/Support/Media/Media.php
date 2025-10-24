@@ -18,8 +18,43 @@ class Media
         return $fileExtensions;
     }
 
-    public static function getMediaPath(string $path = '')
+    public static function getStoragePublicUrl(): string
     {
+        return config('filesystems.disks.public.url') . '/';
+    }
+
+    public static function getStoragePublicPath(): string
+    {
+        return config('filesystems.disks.public.root') . '/';
+    }
+
+    public static function getMediaPath(string $path = ''): string
+    {
+        $path = self::sanitizePath($path);
         return 'media/' . $path;
+    }
+
+    public static function getImagePath(string $path = ''): string
+    {
+        $path = self::sanitizePath($path);
+        return self::getMediaPath('image/' . $path);
+    }
+
+    public static function sanitizePath(string $path): string
+    {
+        $path = str_replace(['..', '\\'], '', $path);
+
+        return trim($path, '/');
+    }
+
+    public static function deleteFile(string $relativePath): bool
+    {
+        $fullPath = self::getStoragePublicPath() . $relativePath;
+
+        if (file_exists($fullPath)) {
+            return unlink($fullPath);
+        }
+
+        return false;
     }
 }

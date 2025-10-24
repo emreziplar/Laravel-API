@@ -24,8 +24,6 @@ abstract class BaseEloquentRepository implements IBaseRepository
         $this->model = new $modelClass();
     }
 
-    abstract protected function getModelClass();
-
     protected function getDefaultRelations(): array
     {
         return [];
