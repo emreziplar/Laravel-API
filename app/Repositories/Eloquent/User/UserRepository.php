@@ -15,6 +15,11 @@ class UserRepository extends BaseEloquentRepository implements IUserRepository
         return User::class;
     }
 
+    protected function getDefaultRelations(): array
+    {
+        return ['media'];
+    }
+
     public function findByEmail(string $email): ?IUserModel
     {
         /** @var User|null $user */

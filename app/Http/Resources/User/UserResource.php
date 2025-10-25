@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\User;
 
+use App\Http\Resources\Media\ModelMediaResource;
 use App\Http\Resources\Role\RoleResource;
 use App\Models\Contracts\IUserModel;
 use Illuminate\Http\Request;
@@ -21,6 +22,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'status' => $this->status,
             'role' => new RoleResource($this->role),
+            'media' => ModelMediaResource::collection($this->media)
         ];
     }
 }

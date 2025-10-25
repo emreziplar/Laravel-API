@@ -8,10 +8,10 @@ use Illuminate\Support\Collection;
 class ModelResponseDTO
 {
     protected readonly IBaseModel|Collection|null $data;
-    protected readonly string $message;
+    protected readonly string|array $message;
     protected readonly int $statusCode;
 
-    public function __construct(Collection|IBaseModel|null $data, string $message, int $statusCode = 200)
+    public function __construct(Collection|IBaseModel|null $data, string|array $message, int $statusCode = 200)
     {
         $this->data = $data;
         $this->message = $message;
@@ -23,7 +23,7 @@ class ModelResponseDTO
         return $this->data;
     }
 
-    public function getMessage(): string
+    public function getMessage(): string|array
     {
         return $this->message;
     }

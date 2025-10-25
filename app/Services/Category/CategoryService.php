@@ -6,6 +6,7 @@ use App\Contracts\Category\ICategoryService;
 use App\DTO\Request\Category\CreateCategoryDTO;
 use App\DTO\Request\Category\UpdateCategoryDTO;
 use App\DTO\Response\ModelResponseDTO;
+use App\Models\Contracts\IUserModel;
 use App\Repositories\Contracts\Category\ICategoryRepository;
 
 class CategoryService implements ICategoryService
@@ -17,7 +18,7 @@ class CategoryService implements ICategoryService
         $this->categoryRepository = $categoryRepository;
     }
 
-    public function create(array $data): ModelResponseDTO
+    public function create(array $data, ?IUserModel $user = null): ModelResponseDTO
     {
         $parent_id = $data['parent_id'] ?? null;
         if ($parent_id && !$parent = $this->categoryRepository->getFirst($parent_id))
@@ -46,7 +47,7 @@ class CategoryService implements ICategoryService
         return new ModelResponseDTO($categories, __t('category.found'));
     }
 
-    public function update(int $id, array $data): ModelResponseDTO
+    public function update(int $id, array $data, ?IUserModel $user = null): ModelResponseDTO
     {
         $category = $this->categoryRepository->getFirst($id);
         if (!$category)
@@ -76,7 +77,7 @@ class CategoryService implements ICategoryService
         return new ModelResponseDTO($category, __t('category.updated'));
     }
 
-    public function delete(int $id): ModelResponseDTO
+    public function delete(int $id, ?IUserModel $user = null): ModelResponseDTO
     {
         $category = $this->categoryRepository->getFirst($id);
         if (!$category)

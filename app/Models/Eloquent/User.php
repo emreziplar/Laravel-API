@@ -48,4 +48,9 @@ class User extends Authenticatable implements IUserModel
     {
         return $this->role_id;
     }
+
+    public function media()
+    {
+        return $this->morphMany(Media::class,'mediable');
+    }
 }

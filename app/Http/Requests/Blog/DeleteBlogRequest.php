@@ -2,14 +2,15 @@
 
 namespace App\Http\Requests\Blog;
 
+use App\Traits\HttpRequestRules\BlogRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class DeleteBlogRequest extends FormRequest
 {
+    use BlogRules;
+
     public function rules(): array
     {
-        return [
-            'id' => 'required|int'
-        ];
+        return $this->deleteRequestBlogRules();
     }
 }

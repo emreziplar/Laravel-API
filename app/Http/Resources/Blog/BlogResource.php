@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Blog;
 
 use App\Http\Resources\Category\CategoryResource;
+use App\Http\Resources\Media\ModelMediaResource;
 use App\Models\Contracts\IBlogModel;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -18,7 +19,8 @@ class BlogResource extends JsonResource
             'id' => $this->getId(),
             'status' => $this->status,
             'category' => new CategoryResource($this->category),
-            'translations' => BlogTranslationResource::collection($this->translations)
+            'translations' => BlogTranslationResource::collection($this->translations),
+            'media' => ModelMediaResource::collection($this->media)
         ];
     }
 }

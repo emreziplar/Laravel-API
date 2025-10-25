@@ -8,35 +8,46 @@ use App\DTO\Request\Blog\UpdateBlogDTO;
 use App\DTO\Response\ModelResponseDTO;
 use App\Models\Contracts\IUserModel;
 use App\Repositories\Contracts\Blog\IBlogRepository;
-use App\Repositories\Contracts\Category\ICategoryRepository;
+use App\Services\Blog\Validators\BlogDataValidator;
+use App\Services\Blog\Validators\BlogBusinessValidator;
 use Illuminate\Support\Facades\Auth;
 
 class BlogService implements IBlogService
 {
     protected IBlogRepository $blogRepository;
-    protected ICategoryRepository $categoryRepository;
+    protected BlogDataValidator $dataValidator;
+    protected BlogBusinessValidator $businessValidator;
 
-    public function __construct(IBlogRepository $blogRepository, ICategoryRepository $categoryRepository)
+    public function __construct(IBlogRepository $blogRepository, BlogDataValidator $dataValidator, BlogBusinessValidator $businessValidator)
     {
         $this->blogRepository = $blogRepository;
-        $this->categoryRepository = $categoryRepository;
+        $this->dataValidator = $dataValidator;
+        $this->businessValidator = $businessValidator;
     }
 
-    public function create(array $data, IUserModel $user = null): ModelResponseDTO
+    /**
+     * @param array $data
+     * @param IUserModel|null $user
+     * @return ModelResponseDTO
+     * @throws \Exception
+     */
+    public function create(array $data, ?IUserModel $user = null): ModelResponseDTO
     {
-        $user ??= Auth::user();
-        if (!$user)
-            throw new \InvalidArgumentException('User is required for blog creation!');
+        $dataValidation = $this->dataValidator->validateCreateData($data);
+        if (!$dataValidation->isValid())
+            return $dataValidation->toModelResponse();
 
-        $category = $this->categoryRepository->getFirst($data['category_id']);
-        if (!$category)
-            return new ModelResponseDTO(null, __t('blog.category_not_found'), 404);
+        $user ??= Auth::user();
+
+        $businessValidation = $this->businessValidator->validateForCreate($data, $user);
+        if (!$businessValidation->isValid())
+            return $businessValidation->toModelResponse();
 
         $createBlogDTO = new CreateBlogDTO(
-            categoryId: $data['category_id'],
-            status: $data['status'] ?? null,
-            user: $user,
-            translations: $data['translations']
+            categoryId: $businessValidation->get('category')->getId(),
+            status: $dataValidation->get('status') ?? null,
+            user: $businessValidation->get('user'),
+            translations: $dataValidation->get('translations')
         );
 
         $blog = $this->blogRepository->createWithTranslations($createBlogDTO);
@@ -46,41 +57,49 @@ class BlogService implements IBlogService
         return new ModelResponseDTO($blog, __t('blog.created'));
     }
 
+    /**
+     * @param array $fields
+     * @return ModelResponseDTO
+     * @throws \Exception
+     */
     public function get(array $fields): ModelResponseDTO
     {
-        $blog = $this->blogRepository->getWithConditions($fields);
+        $dataValidation = $this->dataValidator->validateGetData($fields);
+        if (!$dataValidation->isValid())
+            return $dataValidation->toModelResponse();
 
+        $blog = $this->blogRepository->getWithConditions($fields);
         if ($blog->isEmpty())
             return new ModelResponseDTO(null, __t('blog.not_found'), 404);
 
         return new ModelResponseDTO($blog, __t('blog.found'));
     }
 
-    public function update(int $id, array $data, IUserModel $user = null): ModelResponseDTO
+    /**
+     * @param int $id
+     * @param array $data
+     * @param IUserModel|null $user
+     * @return ModelResponseDTO
+     * @throws \Exception
+     */
+    public function update(int $id, array $data, ?IUserModel $user = null): ModelResponseDTO
     {
+        $dataValidation = $this->dataValidator->validateUpdateData($id, $data);
+        if (!$dataValidation->isValid())
+            return $dataValidation->toModelResponse();
         $user ??= Auth::user();
-        if (!$user)
-            throw new \InvalidArgumentException('User is required for blog creation!');
 
-        $categoryId = $data['category_id'] ?? null;
-        if ($categoryId) {
-            $category = $this->categoryRepository->getFirst($categoryId);
-            if (!$category)
-                return new ModelResponseDTO(null, __t('blog.category_not_found'), 404);
-        }
-
-        $blog = $this->blogRepository->getFirst($data['id']);
-        if (!$blog)
-            return new ModelResponseDTO(null, __t('blog.not_found'), 404);
+        $businessValidation = $this->businessValidator->validateForUpdate($id, $data, $user);
+        if(!$businessValidation->isValid())
+            return $businessValidation->toModelResponse();
 
         $updateBlogDTO = new UpdateBlogDTO(
-            blog: $blog,
-            categoryId: $categoryId,
-            status: $data['status'] ?? null,
-            user: $user,
-            translations: $data['translations'] ?? null
+            blog: $businessValidation->get('blog'),
+            categoryId: $businessValidation->get('category')->getId(),
+            status: $dataValidation->get('status'),
+            user: $businessValidation->get('user'),
+            translations: $dataValidation->get('translations')
         );
-
         $blog = $this->blogRepository->updateWithTranslations($updateBlogDTO);
         if (!$blog)
             return new ModelResponseDTO(null, __t('blog.not_updated'), 500);
@@ -88,13 +107,23 @@ class BlogService implements IBlogService
         return new ModelResponseDTO($blog, __t('blog.updated'));
     }
 
-    public function delete(int $id): ModelResponseDTO
+    /**
+     * @param int $id
+     * @param IUserModel|null $user
+     * @return ModelResponseDTO
+     * @throws \Exception
+     */
+    public function delete(int $id, ?IUserModel $user = null): ModelResponseDTO
     {
-        $blog = $this->blogRepository->getFirst($id);
-        if (!$blog)
-            return new ModelResponseDTO(null, __t('blog.not_found'), 404);
+        $dataValidation = $this->dataValidator->validateDeleteData($id);
+        if (!$dataValidation->isValid())
+            return $dataValidation->toModelResponse();
 
-        $deleted = $this->blogRepository->delete($blog);
+        $businessValidation = $this->businessValidator->validateForDelete($id, $user);
+        if (!$businessValidation->isValid())
+            return $businessValidation->toModelResponse();
+
+        $deleted = $this->blogRepository->delete($businessValidation->getData());
 
         return new ModelResponseDTO(
             null,

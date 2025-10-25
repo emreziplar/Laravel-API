@@ -4,6 +4,7 @@ namespace App\Services\Role;
 
 use App\Contracts\Role\IRoleService;
 use App\DTO\Response\ModelResponseDTO;
+use App\Models\Contracts\IUserModel;
 use App\Repositories\Contracts\Role\IPermissionRepository;
 use App\Repositories\Contracts\Role\IRoleRepository;
 use App\Services\Role\Validators\RolePermissionValidator;
@@ -21,7 +22,7 @@ class RoleService implements IRoleService
         $this->roleValidator = $roleValidator;
     }
 
-    public function create(array $data): ModelResponseDTO
+    public function create(array $data, ?IUserModel $user = null): ModelResponseDTO
     {
         $role = $this->roleRepository->getByRoleName($data['role']);
         if ($role)
@@ -49,7 +50,7 @@ class RoleService implements IRoleService
         );
     }
 
-    public function update(int $id, array $data): ModelResponseDTO
+    public function update(int $id, array $data, ?IUserModel $user = null): ModelResponseDTO
     {
         $role = $this->roleRepository->getFirst($id);
         if (!$role)
@@ -66,11 +67,11 @@ class RoleService implements IRoleService
         );
     }
 
-    public function delete(int $id): ModelResponseDTO
+    public function delete(int $id, ?IUserModel $user = null): ModelResponseDTO
     {
         $role = $this->roleRepository->getFirst($id);
         if (!$role)
-            return new ModelResponseDTO(null, __t('role.not_found'),404);
+            return new ModelResponseDTO(null, __t('role.not_found'), 404);
 
         $role_deleted = $this->roleRepository->delete($role);
 

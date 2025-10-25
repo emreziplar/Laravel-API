@@ -5,17 +5,17 @@ namespace App\DTO\Response;
 class ResponseDTO
 {
     private bool $is_success;
-    private string $message;
+    private string|array $message;
     private mixed $data;
     private int $status_code;
 
     /**
      * @param bool $is_success
-     * @param string $message
+     * @param string|array $message
      * @param mixed $data
      * @param int $status_code
      */
-    public function __construct(bool $is_success, string $message, mixed $data, int $status_code = 200)
+    public function __construct(bool $is_success, string|array $message, mixed $data, int $status_code = 200)
     {
         $this->is_success = $is_success;
         $this->message = $message;
@@ -32,9 +32,9 @@ class ResponseDTO
     }
 
     /**
-     * @return string
+     * @return string|array
      */
-    public function getMessage(): string
+    public function getMessage(): string|array
     {
         return $this->message;
     }

@@ -3,20 +3,15 @@
 namespace App\Http\Requests\Blog;
 
 use App\Rules\HasLangCodeRule;
+use App\Traits\HttpRequestRules\BlogRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateBlogRequest extends FormRequest
 {
+    use BlogRules;
+
     public function rules(): array
     {
-        return [
-            'category_id' => 'required|int',
-            'status' => 'nullable|int',
-            'translations' => ['required', 'array', new HasLangCodeRule('en')],
-            'translations.*.title' => 'required|string|max:125',
-            'translations.*.slug' => 'nullable|alpha_dash',
-            'translations.*.content' => 'required|string',
-            'translations.*.lang_code' => 'required|string|max:5',
-        ];
+        return $this->createRequestBlogRules();
     }
 }

@@ -4,6 +4,7 @@ namespace App\Services\User;
 
 use App\Contracts\User\IUserService;
 use App\DTO\Response\ModelResponseDTO;
+use App\Models\Contracts\IUserModel;
 use App\Repositories\Contracts\User\IUserRepository;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,7 +17,7 @@ class UserService implements IUserService
         $this->userRepository = $userRepository;
     }
 
-    public function create(array $data): ModelResponseDTO
+    public function create(array $data, ?IUserModel $user = null): ModelResponseDTO
     {
         $user = $this->userRepository->findByEmail($data['email']);
         if ($user)
@@ -38,7 +39,7 @@ class UserService implements IUserService
         return new ModelResponseDTO($users, __t('user.found'));
     }
 
-    public function update(int $id, array $data): ModelResponseDTO
+    public function update(int $id, array $data, ?IUserModel $user = null): ModelResponseDTO
     {
         $user = $this->userRepository->getFirst($id);
         if (!$user)
@@ -52,7 +53,7 @@ class UserService implements IUserService
         return new ModelResponseDTO($user ?? null, $user ? __t('user.updated') : __t('user.not_updated'));
     }
 
-    public function delete(int $id): ModelResponseDTO
+    public function delete(int $id, ?IUserModel $user = null): ModelResponseDTO
     {
         $user = $this->userRepository->getFirst($id);
         if (!$user)

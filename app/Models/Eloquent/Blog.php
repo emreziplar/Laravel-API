@@ -24,4 +24,9 @@ class Blog extends Model implements IBlogModel
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
+
+    public function media()
+    {
+        return $this->morphMany(Media::class, 'mediable');
+    }
 }

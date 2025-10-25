@@ -4,6 +4,7 @@ namespace App\Services\Role;
 
 use App\Contracts\Role\IPermissionService;
 use App\DTO\Response\ModelResponseDTO;
+use App\Models\Contracts\IUserModel;
 use App\Repositories\Contracts\Role\IPermissionRepository;
 
 class PermissionService implements IPermissionService
@@ -15,7 +16,7 @@ class PermissionService implements IPermissionService
         $this->permissionRepository = $permissionRepository;
     }
 
-    public function create(array $data): ModelResponseDTO
+    public function create(array $data, ?IUserModel $user = null): ModelResponseDTO
     {
         $permission = $this->permissionRepository->getByName($data['name']);
         if ($permission)
@@ -43,7 +44,7 @@ class PermissionService implements IPermissionService
         );
     }
 
-    public function update(int $id, array $data): ModelResponseDTO
+    public function update(int $id, array $data, ?IUserModel $user = null): ModelResponseDTO
     {
         $permission = $this->permissionRepository->getFirst($id);
         if (!$permission)
@@ -60,11 +61,11 @@ class PermissionService implements IPermissionService
         );
     }
 
-    public function delete(int $id): ModelResponseDTO
+    public function delete(int $id, ?IUserModel $user = null): ModelResponseDTO
     {
         $permission = $this->permissionRepository->getFirst($id);
         if (!$permission)
-            return new ModelResponseDTO(null, __t('permission.not_found'),404);
+            return new ModelResponseDTO(null, __t('permission.not_found'), 404);
 
         $permission_deleted = $this->permissionRepository->delete($permission);
 
