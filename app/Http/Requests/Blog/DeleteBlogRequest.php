@@ -11,6 +11,6 @@ class DeleteBlogRequest extends FormRequest
 
     public function rules(): array
     {
-        return $this->deleteRequestBlogRules();
+        return $this->deleteBlogRequestRules();
     }
 }

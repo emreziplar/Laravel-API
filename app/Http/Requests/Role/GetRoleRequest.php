@@ -2,16 +2,15 @@
 
 namespace App\Http\Requests\Role;
 
+use App\Traits\HttpRequestRules\RoleRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class GetRoleRequest extends FormRequest
 {
+    use RoleRules;
+
     public function rules(): array
     {
-        return [
-            'id' => 'nullable|integer',
-            'role' => 'nullable|string',
-            'permissions' => 'nullable|bool'
-        ];
+        return $this->getRoleRequestRules();
     }
 }

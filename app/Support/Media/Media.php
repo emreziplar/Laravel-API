@@ -40,6 +40,18 @@ class Media
         return self::getMediaPath('image/' . $path);
     }
 
+    public static function getVideoPath(string $path = ''): string
+    {
+        $path = self::sanitizePath($path);
+        return self::getMediaPath('video/' . $path);
+    }
+
+    public static function getAudioPath(string $path = ''): string
+    {
+        $path = self::sanitizePath($path);
+        return self::getMediaPath('audio/' . $path);
+    }
+
     public static function sanitizePath(string $path): string
     {
         $path = str_replace(['..', '\\'], '', $path);

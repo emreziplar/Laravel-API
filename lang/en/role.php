@@ -17,5 +17,7 @@ return [
     'successfully_assigned' => 'Permission(s) is successfully assigned: :permissions',
     'successfully_revoked' => 'Permission(s) is successfully revoked: :permissions',
     'deleted' => 'Role is successfully deleted.',
-    'not_deleted' => 'Role is not deleted!'
+    'not_deleted' => 'Role is not deleted!',
+    'unsupported_action_repository' => 'This action is not supported in this version!',
+    'repository_not_found' => 'An unknown error occurred!'
 ];

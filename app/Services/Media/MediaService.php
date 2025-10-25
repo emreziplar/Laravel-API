@@ -2,12 +2,15 @@
 
 namespace App\Services\Media;
 
+use App\Contracts\Media\IMediaBusinessValidator;
+use App\Contracts\Media\IMediaDataValidator;
 use App\Contracts\Media\IMediaHandler;
 use App\Contracts\Media\IMediaService;
 use App\DTO\Request\Media\CreateMediaDTO;
 use App\DTO\Response\ModelResponseDTO;
 use App\Enums\ResourceType;
 use App\Models\Contracts\IMediaModel;
+use App\Models\Contracts\IUserModel;
 use App\Repositories\Contracts\Media\IMediaRepository;
 use App\Repositories\Proxy\RepositoryProxy;
 use App\Support\Media\Media as MediaSupport;
@@ -17,37 +20,43 @@ class MediaService implements IMediaService
     protected IMediaRepository $mediaRepository;
     protected IMediaHandler $mediaHandler;
     protected RepositoryProxy $repositoryProxy;
+    protected IMediaDataValidator $dataValidator;
+    protected IMediaBusinessValidator $businessValidator;
 
-    public function __construct(IMediaRepository $mediaRepository, IMediaHandler $mediaHandler, RepositoryProxy $repositoryProxy)
+    public function __construct(IMediaRepository    $mediaRepository,
+                                IMediaHandler       $mediaHandler,
+                                RepositoryProxy     $repositoryProxy,
+                                IMediaDataValidator $dataValidator, IMediaBusinessValidator $businessValidator)
     {
         $this->mediaRepository = $mediaRepository;
         $this->mediaHandler = $mediaHandler;
         $this->repositoryProxy = $repositoryProxy;
+        $this->dataValidator = $dataValidator;
+        $this->businessValidator = $businessValidator;
     }
 
-    public function create(CreateMediaDTO $createMediaDTO): ModelResponseDTO
+    public function create(CreateMediaDTO $createMediaDTO, ?IUserModel $user = null): ModelResponseDTO
     {
+        $dataValidation = $this->dataValidator->validateCreateData($createMediaDTO);
+        if (!$dataValidation->isValid())
+            return $dataValidation->toModelResponse();
+
         $resourceType = $createMediaDTO->resourceType;
         $resourceName = $resourceType->value;
-        $resourceId = $createMediaDTO->resourceId;
         $files = $createMediaDTO->files;
 
         $repository = $this->repositoryProxy->on($resourceType);
 
-        $modelData = $repository->getFirst($resourceId);
-        if (!$modelData)
-            return new ModelResponseDTO(
-                null,
-                __t('media.resource_not_found', ['resource_name' => $resourceName]),
-                404
-            );
+        $businessValidation = $this->businessValidator->validateForCreate($createMediaDTO, $repository);
+        if (!$businessValidation->isValid())
+            return $businessValidation->toModelResponse();
 
-        //TODO: service validators // file jobs
+        //TODO: file jobs
         $mediaFields = [];
         foreach ($files as $file)
             $mediaFields[] = $this->mediaHandler->store($file, $resourceName);
 
-        $mediaOfModel = $this->mediaRepository->createForModel($modelData, $mediaFields);
+        $mediaOfModel = $this->mediaRepository->createForModel($businessValidation->get('model'), $mediaFields);
 
         return new ModelResponseDTO(
             $mediaOfModel ?: null,
@@ -59,7 +68,12 @@ class MediaService implements IMediaService
 
     public function get(array $fields): ModelResponseDTO
     {
-        $resourceName = $fields['resource_name'] ?? null;
+        $dataValidation = $this->dataValidator->validateGetData($fields);
+        if (!$dataValidation->isValid())
+            return $dataValidation->toModelResponse();
+
+        $resourceName = $dataValidation->get('resource_name');
+
         if (!$resourceName) {
             $mediaData = $this->mediaRepository->all();
             $isMediaData = $mediaData->isNotEmpty();
@@ -87,12 +101,19 @@ class MediaService implements IMediaService
         );
     }
 
-    public function delete(int $id): ModelResponseDTO
+    public function delete(int $id, ?IUserModel $user = null): ModelResponseDTO
     {
+        $dataValidation = $this->dataValidator->validateDeleteData($id);
+        if (!$dataValidation->isValid())
+            return $dataValidation->toModelResponse();
+
+
+        $businessValidation = $this->businessValidator->validateForDelete($id, $user);
+        if (!$businessValidation->isValid())
+            return $businessValidation->toModelResponse();
+
         /** @var IMediaModel $media */
-        $media = $this->mediaRepository->getFirst($id);
-        if (!$media)
-            return new ModelResponseDTO(null, __t('media.not_found'), 404);
+        $media = $businessValidation->get('media');
 
         $isDeleted = $this->mediaRepository->delete($media);
 

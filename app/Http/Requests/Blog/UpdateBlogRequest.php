@@ -12,6 +12,6 @@ class UpdateBlogRequest extends FormRequest
 
     public function rules(): array
     {
-        return $this->updateRequestBlogRules($this->all());
+        return $this->updateBlogRequestRules($this->all());
     }
 }

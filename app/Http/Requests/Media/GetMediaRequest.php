@@ -4,15 +4,15 @@ namespace App\Http\Requests\Media;
 
 use App\Rules\HasResourceRule;
 use App\Rules\NotFieldAloneRule;
+use App\Traits\HttpRequestRules\MediaRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class GetMediaRequest extends FormRequest
 {
+    use MediaRules;
+
     public function rules(): array
     {
-        return [
-            'resource_name' => ['nullable', 'string', new HasResourceRule()],
-            'resource_id' => ['nullable', 'int', new NotFieldAloneRule($this->all(), ['resource_id'])],
-        ];
+        return $this->getMediaRequestRules($this->all());
     }
 }

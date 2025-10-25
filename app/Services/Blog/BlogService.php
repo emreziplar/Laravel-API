@@ -2,23 +2,23 @@
 
 namespace App\Services\Blog;
 
+use App\Contracts\Blog\IBlogBusinessValidator;
+use App\Contracts\Blog\IBlogDataValidator;
 use App\Contracts\Blog\IBlogService;
 use App\DTO\Request\Blog\CreateBlogDTO;
 use App\DTO\Request\Blog\UpdateBlogDTO;
 use App\DTO\Response\ModelResponseDTO;
 use App\Models\Contracts\IUserModel;
 use App\Repositories\Contracts\Blog\IBlogRepository;
-use App\Services\Blog\Validators\BlogDataValidator;
-use App\Services\Blog\Validators\BlogBusinessValidator;
 use Illuminate\Support\Facades\Auth;
 
 class BlogService implements IBlogService
 {
     protected IBlogRepository $blogRepository;
-    protected BlogDataValidator $dataValidator;
-    protected BlogBusinessValidator $businessValidator;
+    protected IBlogDataValidator $dataValidator;
+    protected IBlogBusinessValidator $businessValidator;
 
-    public function __construct(IBlogRepository $blogRepository, BlogDataValidator $dataValidator, BlogBusinessValidator $businessValidator)
+    public function __construct(IBlogRepository $blogRepository, IBlogDataValidator $dataValidator, IBlogBusinessValidator $businessValidator)
     {
         $this->blogRepository = $blogRepository;
         $this->dataValidator = $dataValidator;
@@ -68,7 +68,7 @@ class BlogService implements IBlogService
         if (!$dataValidation->isValid())
             return $dataValidation->toModelResponse();
 
-        $blog = $this->blogRepository->getWithConditions($fields);
+        $blog = $this->blogRepository->getWithConditions($dataValidation->getData());
         if ($blog->isEmpty())
             return new ModelResponseDTO(null, __t('blog.not_found'), 404);
 

@@ -7,7 +7,7 @@ use App\Rules\NotFieldAloneRule;
 
 trait BlogRules
 {
-    public function createRequestBlogRules(): array
+    public function createBlogRequestRules(): array
     {
         return [
             'category_id' => 'required|int',
@@ -20,21 +20,21 @@ trait BlogRules
         ];
     }
 
-    public function getRequestBlogRules(): array
-    {
-        return [
-            'id' => 'nullable|int'
-        ];
-    }
-
-    public function deleteRequestBlogRules():array
+    public function deleteBlogRequestRules(): array
     {
         return [
             'id' => 'required|int'
         ];
     }
 
-    public function updateRequestBlogRules($allRequestData = null):array
+    public function getBlogRequestRules(): array
+    {
+        return [
+            'id' => 'nullable|int'
+        ];
+    }
+
+    public function updateBlogRequestRules($allRequestData = null): array
     {
         return [
             'id' => ['required', 'int', new NotFieldAloneRule($allRequestData)],

@@ -2,14 +2,13 @@
 
 namespace App\Services\Blog\Validators;
 
-use App\Contracts\IBaseBusinessValidator;
+use App\Contracts\Blog\IBlogBusinessValidator;
 use App\Models\Contracts\IUserModel;
 use App\Repositories\Contracts\Blog\IBlogRepository;
 use App\Repositories\Contracts\Category\ICategoryRepository;
 use App\Support\Validation\ValidationResult;
-use Illuminate\Support\Facades\Auth;
 
-class BlogBusinessValidator implements IBaseBusinessValidator
+class BlogBusinessValidator implements IBlogBusinessValidator
 {
     protected IBlogRepository $blogRepository;
     protected ICategoryRepository $categoryRepository;

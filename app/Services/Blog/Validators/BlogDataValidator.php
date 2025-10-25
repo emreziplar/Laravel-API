@@ -2,12 +2,12 @@
 
 namespace App\Services\Blog\Validators;
 
-use App\Contracts\IBaseDataValidator;
+use App\Contracts\Blog\IBlogDataValidator;
 use App\Services\BaseServiceDataValidator;
 use App\Support\Validation\ValidationResult;
 use App\Traits\HttpRequestRules\BlogRules;
 
-class BlogDataValidator extends BaseServiceDataValidator implements IBaseDataValidator
+class BlogDataValidator extends BaseServiceDataValidator implements IBlogDataValidator
 {
     use BlogRules;
 
@@ -18,7 +18,7 @@ class BlogDataValidator extends BaseServiceDataValidator implements IBaseDataVal
      */
     public function validateCreateData(array $data): ValidationResult
     {
-        return $this->validateData($data, 'createRequestBlogRules');
+        return $this->validateData($data, 'createBlogRequestRules');
     }
 
     /**
@@ -28,7 +28,7 @@ class BlogDataValidator extends BaseServiceDataValidator implements IBaseDataVal
      */
     public function validateGetData(array $data): ValidationResult
     {
-        return $this->validateData($data, 'getRequestBlogRules');
+        return $this->validateData($data, 'getBlogRequestRules');
     }
 
     /**
@@ -39,7 +39,7 @@ class BlogDataValidator extends BaseServiceDataValidator implements IBaseDataVal
      */
     public function validateUpdateData(int $id, array $data): ValidationResult
     {
-        return $this->validateData($data, 'updateRequestBlogRules');
+        return $this->validateData($data, 'updateBlogRequestRules');
     }
 
     /**
@@ -49,6 +49,6 @@ class BlogDataValidator extends BaseServiceDataValidator implements IBaseDataVal
      */
     public function validateDeleteData(int $id): ValidationResult
     {
-        return $this->validateData(['id' => $id], 'deleteRequestBlogRules');
+        return $this->validateData(['id' => $id], 'deleteBlogRequestRules');
     }
 }

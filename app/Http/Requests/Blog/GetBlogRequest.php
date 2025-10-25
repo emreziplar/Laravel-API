@@ -11,6 +11,6 @@ class GetBlogRequest extends FormRequest
 
     public function rules(): array
     {
-        return $this->getRequestBlogRules();
+        return $this->getBlogRequestRules();
     }
 }

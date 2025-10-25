@@ -2,18 +2,15 @@
 
 namespace App\Http\Requests\User;
 
+use App\Traits\HttpRequestRules\UserRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateUserRequest extends FormRequest
 {
+    use UserRules;
+
     public function rules(): array
     {
-        return [
-            'role_id' => 'required|int',
-            'name' => 'required|string',
-            'email' => 'required|email',
-            'status' => 'nullable|int',
-            'password' => 'required'
-        ];
+        return $this->createUserRequestRules();
     }
 }

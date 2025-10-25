@@ -2,20 +2,15 @@
 
 namespace App\Http\Requests\Category;
 
+use App\Traits\HttpRequestRules\CategoryRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCategoryRequest extends FormRequest
 {
+    use CategoryRules;
+
     public function rules(): array
     {
-        return [
-            'id' => 'required|int',
-            'parent_id' => 'nullable|int',
-            'status' => 'nullable|int',
-            'translations' => 'nullable|array',
-            'translations.*.name' => 'required|string',
-            'translations.*.slug' => 'nullable|alpha_dash',
-            'translations.*.lang_code' => 'required|string|max:5',
-        ];
+        return $this->updateCategoryRequestRules();
     }
 }

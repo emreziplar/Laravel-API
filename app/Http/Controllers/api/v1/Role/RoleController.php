@@ -9,6 +9,7 @@ use App\Http\Requests\Role\CreateRoleRequest;
 use App\Http\Requests\Role\DeleteRoleRequest;
 use App\Http\Requests\Role\GetRoleRequest;
 use App\Http\Requests\Role\RolePermission\AssignPermissionRequest;
+use App\Http\Requests\Role\RolePermission\RevokePermissionRequest;
 use App\Http\Requests\Role\UpdateRoleRequest;
 use App\Http\Resources\Role\RoleResource;
 use Dedoc\Scramble\Attributes\Endpoint;
@@ -76,11 +77,11 @@ class RoleController extends Controller
         return $this->respondWithModelDTO($modelResponseDTO, RoleResource::class);
     }
 
-    public function revokePermission(AssignPermissionRequest $assignPermissionsRequest)
+    public function revokePermission(RevokePermissionRequest $revokePermissionRequest)
     {
         $this->authorize('revokePermission',self::POLICY);
 
-        $modelResponseDTO = $this->roleService->revokePermission($assignPermissionsRequest->validated());
+        $modelResponseDTO = $this->roleService->revokePermission($revokePermissionRequest->validated());
 
         return $this->respondWithModelDTO($modelResponseDTO, RoleResource::class);
     }

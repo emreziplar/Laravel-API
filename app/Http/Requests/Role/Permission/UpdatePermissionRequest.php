@@ -2,15 +2,15 @@
 
 namespace App\Http\Requests\Role\Permission;
 
+use App\Traits\HttpRequestRules\PermissionRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdatePermissionRequest extends FormRequest
 {
+    use PermissionRules;
+
     public function rules(): array
     {
-        return [
-            'id' => 'required|integer',
-            'name' => 'required|string'
-        ];
+        return $this->updatePermissionRequestRules();
     }
 }
