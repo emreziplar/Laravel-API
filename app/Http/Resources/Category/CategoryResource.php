@@ -17,7 +17,7 @@ class CategoryResource extends JsonResource
         return [
             'id' => $this->getId(),
             'names' => $this->translations?->pluck('name', 'lang_code'),
-            'full_path' => $this->fullPath(),
+            'full_path' => $this->full_path ?? null,
             'parent' => $this->whenLoaded('parent', function () {
                 return [
                     'id' => $this->parent->id,

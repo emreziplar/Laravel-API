@@ -6,5 +6,5 @@ interface ICategoryModel extends IBaseModel
 {
     public function getParentId(): ?int;
 
-    public function fullPath(): string;
+    public function getFullPathAttribute(): string;
 }

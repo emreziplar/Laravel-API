@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Contracts\Cache\ICacheService;
+use App\Repositories\Cache\Blog\CacheBlogRepository;
+use App\Repositories\Cache\Category\CacheCategoryRepository;
 use App\Repositories\Contracts\Auth\IAuthRepository;
 use App\Repositories\Contracts\Blog\IBlogRepository;
 use App\Repositories\Contracts\Category\ICategoryRepository;
@@ -16,6 +19,8 @@ use App\Repositories\Eloquent\Media\MediaRepository;
 use App\Repositories\Eloquent\Role\PermissionRepository;
 use App\Repositories\Eloquent\Role\RoleRepository;
 use App\Repositories\Eloquent\User\UserRepository;
+use App\Services\Cache\Drivers\FileCacheService;
+use App\Services\Cache\Drivers\RedisCacheService;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -30,10 +35,21 @@ class RepositoryServiceProvider extends ServiceProvider
             IPermissionRepository::class => PermissionRepository::class,
             IRoleRepository::class => RoleRepository::class,
             IUserRepository::class => UserRepository::class,
-            ICategoryRepository::class => CategoryRepository::class,
-            IBlogRepository::class => BlogRepository::class,
+            ICategoryRepository::class => function ($app) {
+                return new CacheCategoryRepository(
+                    $app->make(CategoryRepository::class),
+                    $app->make(FileCacheService::class)
+                );
+            },
+            IBlogRepository::class => function ($app) {
+                return new CacheBlogRepository(
+                    $app->make(BlogRepository::class),
+                    $app->make(RedisCacheService::class)
+                );
+            },
             IMediaRepository::class => MediaRepository::class,
         ];
+
         foreach ($repositories as $repoContract => $repoClass) {
             $this->app->singleton($repoContract, $repoClass);
         }

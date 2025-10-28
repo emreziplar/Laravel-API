@@ -9,6 +9,7 @@ use App\Models\Contracts\ICategoryModel;
 use App\Models\Eloquent\Category;
 use App\Repositories\Contracts\Category\ICategoryRepository;
 use App\Repositories\Eloquent\BaseEloquentRepository;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -74,5 +75,32 @@ class CategoryRepository extends BaseEloquentRepository implements ICategoryRepo
 
             return $categoryModel->load($this->getDefaultRelations());
         });
+    }
+
+    public function getFullPath(ICategoryModel $categoryModel): string
+    {
+        $locale = App::getLocale();
+
+        $names = [];
+
+        $category = $categoryModel;
+
+        while ($category) {
+
+            $translation = $category->translations->firstWhere('lang_code', $locale);
+
+            if (!$translation) {
+                $translation = $category->translations->firstWhere(
+                    'lang_code',
+                    config('app.fallback_locale', 'en')
+                );
+            }
+
+            $names[] = $translation->name ?? '';
+            $category = $category->parent;
+        }
+
+        $names = array_reverse($names);
+        return implode(' > ', $names);
     }
 }

@@ -20,7 +20,10 @@ class BlogRepository extends BaseEloquentRepository implements IBlogRepository
 
     protected function getDefaultRelations(): array
     {
-        return ['translations', 'media'];
+        return [
+            'translations', 'translations.author', 'media',
+            'category', 'category.translations', 'category.parent.translations', 'category.media',
+        ];
     }
 
     public function createWithTranslations(CreateBlogDTO $createBlogDTO): ?IBlogModel

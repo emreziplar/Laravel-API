@@ -36,30 +36,9 @@ class Category extends Model implements ICategoryModel
         return $this->morphMany(Media::class, 'mediable');
     }
 
-    public function fullPath(): string
+    public function getFullPathAttribute(): string
     {
-        //TODO: use cache
-        $locale = App::getLocale();
-
-        $names = [];
-
-        $category = $this;
-        while ($category) {
-
-            $translation = $category->translations->firstWhere('lang_code', $locale);
-
-            if (!$translation) {
-                $translation = $category->translations->firstWhere(
-                    'lang_code',
-                    config('app.fallback_locale', 'en')
-                );
-            }
-
-            $names[] = $translation->name ?? '';
-            $category = $category->parent;
-        }
-
-        $names = array_reverse($names);
-        return implode(' > ', $names);
+        return app(\App\Repositories\Contracts\Category\ICategoryRepository::class)
+            ->getFullPath($this);
     }
 }

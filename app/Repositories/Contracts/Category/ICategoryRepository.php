@@ -15,4 +15,6 @@ interface ICategoryRepository extends IBaseRepository
     public function createWithTranslations(CreateCategoryDTO $createCategoryDTO): ?ICategoryModel;
 
     public function updateWithTranslations(UpdateCategoryDTO $updateCategoryDTO): ?ICategoryModel;
+
+    public function getFullPath(ICategoryModel $categoryModel): string;
 }

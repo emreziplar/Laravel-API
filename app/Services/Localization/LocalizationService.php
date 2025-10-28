@@ -15,6 +15,7 @@ class LocalizationService
         $this->translator_services = $translator_services;
     }
 
+    //TODO: too much responsibility
     public function translate(string $key, array $replace = []): ?string
     {
         if (Localization::checkTranslationIfExists($key, $this->getDestinationLang())

@@ -36,14 +36,19 @@ class BusinessServiceProvider extends ServiceProvider
         $this->app->tag($loginServices, 'login.services');
         $this->app->singleton(IAuthService::class, function ($app) {
             return new AuthService($app->tagged('login.services'), $app->make(IAuthRepository::class), $app->make(IUserRepository::class));
-        });
-        $this->app->singleton(IPermissionService::class, PermissionService::class);
-        $this->app->singleton(IRoleService::class, RoleService::class);
-        $this->app->singleton(IUserService::class, UserService::class);
-        $this->app->singleton(ICategoryService::class, CategoryService::class);
-        $this->app->singleton(IBlogService::class, BlogService::class);
-        $this->app->singleton(IMediaService::class, MediaService::class);
-        $this->app->singleton(IMediaHandler::class, MediaHandlerProxy::class);
+        }); //TODO: edit
+
+        $services = [
+            IPermissionService::class => PermissionService::class,
+            IRoleService::class => RoleService::class,
+            IUserService::class => UserService::class,
+            ICategoryService::class => CategoryService::class,
+            IBlogService::class => BlogService::class,
+            IMediaService::class => MediaService::class,
+            IMediaHandler::class => MediaHandlerProxy::class,
+        ];
+        foreach ($services as $contract => $class)
+            $this->app->singleton($contract, $class);
     }
 
     /**
