@@ -96,11 +96,14 @@ abstract class CacheBaseRepository implements IBaseRepository
 
     public function all(): Collection
     {
+        $cacheKey = $this->buildCacheKey('all');
+        if ($cached = $this->getCacheIfExists($cacheKey))
+            return $cached;
+
         $all = $this->baseRepository->all();
         if ($all->isEmpty())
             return $all;
 
-        $cacheKey = $this->buildCacheKey('all');
         return $this->cacheService->tags($this->getCacheTag())->remember($cacheKey, $this->getTTL(), function () use ($all) {
             return $all;
         });
@@ -129,15 +132,7 @@ abstract class CacheBaseRepository implements IBaseRepository
 
     public function pluckByColumn(string $col, array $data, string $pluckValuesCol, string $pluckKeysCol = null): Collection
     {
-        $plucks = $this->baseRepository->pluckByColumn($col, $data, $pluckValuesCol, $pluckKeysCol);
-
-        if ($plucks->isEmpty())
-            return $plucks;
-
-        $cacheKey = $this->buildCacheKey($data);
-        return $this->cacheService->tags($this->getCacheTag())->remember($cacheKey, $this->getTTL(), function () use ($all) {
-            return $all;
-        });
+        return $this->baseRepository->pluckByColumn($col, $data, $pluckValuesCol, $pluckKeysCol);
     }
 
     public function getModelClass(): string

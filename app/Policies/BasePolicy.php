@@ -23,6 +23,6 @@ class BasePolicy
         if (!$role)
             return false;
 
-        return $this->roleRepository->isPermissionOfRole($role, $permission_name); //TODO: refactor
+        return $this->roleRepository->isPermissionOfRole($role, $permission_name);
     }
 }

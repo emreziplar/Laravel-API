@@ -97,8 +97,8 @@ class RoleService implements IRoleService
             return new ModelResponseDTO(null, __t('role.already_has_permissions', ['assigned_permissions' => implode(',', $assigned_permissions)]), 409);
 
         $permissionIds = $this->permissionRepository->getIdsByNames($data['permissions'])->toArray();
-        $result = $this->roleRepository->assignPermissions($role, $permissionIds);
-        if ($result['processed_count'] < 1)
+        $isAssigned = $this->roleRepository->assignPermissions($role, $permissionIds);
+        if (!$isAssigned)
             return new ModelResponseDTO(null, __t('role.not_assigned'), 500);
 
         return new ModelResponseDTO($role, __t('role.successfully_assigned', ['permissions' => implode(',', $data['permissions'])]));
@@ -114,8 +114,8 @@ class RoleService implements IRoleService
             return new ModelResponseDTO(null, __t('role.has_not_permissions', ['unassigned_permissions' => implode(',', $unassigned_permissions)]), 404);
 
         $permissionIds = $this->permissionRepository->getIdsByNames($data['permissions'])->toArray();
-        $result = $this->roleRepository->revokePermissions($role, $permissionIds);
-        if ($result['processed_count'] < 1)
+        $isRevoked = $this->roleRepository->revokePermissions($role, $permissionIds);
+        if (!$isRevoked)
             return new ModelResponseDTO(null, __t('role.not_revoked'), 500);
 
         return new ModelResponseDTO($role, __t('role.successfully_revoked', ['permissions' => implode(',', $data['permissions'])]));

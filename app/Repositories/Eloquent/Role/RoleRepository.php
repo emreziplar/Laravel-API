@@ -16,24 +16,18 @@ class RoleRepository extends BaseEloquentRepository implements IRoleRepository
         return Role::class;
     }
 
-    public function assignPermissions(IRoleModel $roleModel, array $permissionIds): array
+    public function assignPermissions(IRoleModel $roleModel, array $permissionIds): bool
     {
         $result = $roleModel->permissions()->syncWithoutDetaching($permissionIds);
 
-        return [
-            'processed_count' => count($result['attached']),
-            'processed_ids' => $result['attached']
-        ];
+        return count($result['attached']) > 0;
     }
 
-    public function revokePermissions(IRoleModel $roleModel, array $permissionIds): array
+    public function revokePermissions(IRoleModel $roleModel, array $permissionIds): bool
     {
         $count = $roleModel->permissions()->detach($permissionIds);
 
-        return [
-            'processed_count' => $count,
-            'processed_ids' => $count > 0 ? $permissionIds : []
-        ];
+        return $count > 0;
     }
 
     public function getPermissionNamesOfRole(IRoleModel $roleModel): Collection

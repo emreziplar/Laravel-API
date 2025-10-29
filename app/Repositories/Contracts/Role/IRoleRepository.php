@@ -19,7 +19,7 @@ interface IRoleRepository extends IBaseRepository
 
     public function isPermissionOfRole(IRoleModel $roleModel, string $permission_name): bool;
 
-    public function assignPermissions(IRoleModel $roleModel, array $permissionIds): array;
+    public function assignPermissions(IRoleModel $roleModel, array $permissionIds): bool;
 
-    public function revokePermissions(IRoleModel $roleModel, array $permissionIds): array;
+    public function revokePermissions(IRoleModel $roleModel, array $permissionIds): bool;
 }

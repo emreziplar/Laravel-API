@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Contracts\Cache\ICacheService;
 use App\Repositories\Cache\Blog\CacheBlogRepository;
 use App\Repositories\Cache\Category\CacheCategoryRepository;
+use App\Repositories\Cache\Role\CachePermissionRepository;
+use App\Repositories\Cache\Role\CacheRoleRepository;
 use App\Repositories\Contracts\Auth\IAuthRepository;
 use App\Repositories\Contracts\Blog\IBlogRepository;
 use App\Repositories\Contracts\Category\ICategoryRepository;
@@ -32,8 +34,18 @@ class RepositoryServiceProvider extends ServiceProvider
     {
         $repositories = [
             IAuthRepository::class => AuthRepository::class,
-            IPermissionRepository::class => PermissionRepository::class,
-            IRoleRepository::class => RoleRepository::class,
+            IPermissionRepository::class => function ($app) {
+                return new CachePermissionRepository(
+                    $app->make(PermissionRepository::class),
+                    $app->make(RedisCacheService::class)
+                );
+            },
+            IRoleRepository::class => function ($app) {
+                return new CacheRoleRepository(
+                    $app->make(RoleRepository::class),
+                    $app->make(RedisCacheService::class)
+                );
+            },
             IUserRepository::class => UserRepository::class,
             ICategoryRepository::class => function ($app) {
                 return new CacheCategoryRepository(
