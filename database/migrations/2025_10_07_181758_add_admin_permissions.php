@@ -12,9 +12,12 @@ return new class extends Migration {
     public function up(): void
     {
         $def_admin_permissions = [
-            'role.create', 'role.update', 'role.delete',
-            'permission.create', 'permission.update', 'permission.delete',
-            'role_permission.create', 'role_permission_update', 'role_permission.delete'
+            'user.get', 'user.create', 'user.update', 'user.delete',
+            'role.get', 'role.create', 'role.update', 'role.delete', 'role.assignPermission','role.revokePermission',
+            'permission.get', 'permission.create', 'permission.update', 'permission.delete',
+            'media.get', 'media.create', 'media.update', 'media.delete',
+            'category.get', 'category.create', 'category.update', 'category.delete',
+            'blog.get', 'blog.create', 'blog.update', 'blog.delete'
         ];
 
         $insert_data = array_map(function ($permission) {
@@ -40,10 +43,14 @@ return new class extends Migration {
     public function down(): void
     {
         $def_admin_permissions = [
-            'role.create', 'role.update', 'role.delete',
-            'permission.create', 'permission.update', 'permission.delete',
-            'role_permission.create', 'role_permission_update', 'role_permission.delete'
+            'user.get', 'user.create', 'user.update', 'user.delete',
+            'role.get', 'role.create', 'role.update', 'role.delete', 'role.assignPermission','role.revokePermission',
+            'permission.get', 'permission.create', 'permission.update', 'permission.delete',
+            'media.get', 'media.create', 'media.update', 'media.delete',
+            'category.get', 'category.create', 'category.update', 'category.delete',
+            'blog.get', 'blog.create', 'blog.update', 'blog.delete'
         ];
+
         $permission_ids = DB::table('permissions')->whereIn('name', $def_admin_permissions)->pluck('id')->toArray();
 
         if (!empty($permission_ids)) {

@@ -63,6 +63,7 @@ return new class extends Migration {
         Schema::create('blog_translations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('blog_id');
+            $table->unsignedBigInteger('author_id')->nullable();
             $table->string('title',125);
             $table->string('slug')->unique();
             $table->text('content');

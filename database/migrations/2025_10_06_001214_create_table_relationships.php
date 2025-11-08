@@ -56,7 +56,7 @@ return new class extends Migration {
                 ->references('id')
                 ->cascadeOnDelete();
             $table->foreign('author_id')
-                ->on('user')
+                ->on('users')
                 ->references('id')
                 ->nullOnDelete();
         });
