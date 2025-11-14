@@ -14,7 +14,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        class_alias(User::class, \App\Models\User::class);
+        if (!app()->runningUnitTests()) {
+            class_alias(User::class, \App\Models\User::class);
+        }
 
         $this->app->singleton(LocalizationService::class, function () {
             return new LocalizationService(config('localization.drivers'));
